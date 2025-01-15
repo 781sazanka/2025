@@ -22,6 +22,10 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
 
+import frc.robot.commands.newcommand.newcommand;
+import frc.robot.subsystems.newsubsystem;
+
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
  * little robot logic should actually be handled in the {@link Robot} periodic methods (other than the scheduler calls).
@@ -35,6 +39,8 @@ public class RobotContainer
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve"));
+
+  private final newsubsystem newsubsystem = new newsubsystem();
   // Applies deadbands and inverts controls because joysticks
   // are back-right positive while robot
   // controls are front-left positive
@@ -131,6 +137,7 @@ public class RobotContainer
    */
   private void configureBindings()
   {
+    
     // (Condition) ? Return-On-True : Return-on-False
     drivebase.setDefaultCommand(!RobotBase.isSimulation() ?
                                 driveFieldOrientedDirectAngle :
@@ -153,6 +160,8 @@ public class RobotContainer
       driverXbox.rightBumper().onTrue(Commands.none());
     } else
     {
+      newsubsystem.setDefaultCommand(new newcommand(newsubsystem,(() -> driverXbox.a().getAsBoolean()),(() -> driverXbox.b().getAsBoolean())));
+
       driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
       driverXbox.b().whileTrue(
