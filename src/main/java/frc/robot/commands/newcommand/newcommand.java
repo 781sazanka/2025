@@ -34,6 +34,8 @@ public class newcommand extends Command {
             newsubsystem.forwards();
         }else if(isButtonPressed_2.get()){
             newsubsystem.backwards();
+        }else{
+            newsubsystem.stop();
         }
     }
 

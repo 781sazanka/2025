@@ -11,11 +11,15 @@ public class newsubsystem extends SubsystemBase {
     }
 
     public void forwards(){
-        m_motor1.set(1);
+        m_motor1.set(0.1);
+    }
+
+    public void stop(){
+        m_motor1.set(0);
     }
 
 
     public void backwards(){
-        m_motor1.set(-1);
+        m_motor1.set(-0.1);
     }
 }
