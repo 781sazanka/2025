@@ -152,6 +152,8 @@ public class RobotContainer
 
     } else
     {
+      newsubsystem.setDefaultCommand(new newcommand(newsubsystem,(() -> driverXbox.a().getAsBoolean()),(() -> driverXbox.b().getAsBoolean())));
+      /* 
       driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
       driverXbox.b().whileTrue(
@@ -163,6 +165,7 @@ public class RobotContainer
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightBumper().onTrue(Commands.none());
+      */
     }
 
   }
