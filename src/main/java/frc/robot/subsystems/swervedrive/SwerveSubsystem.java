@@ -126,6 +126,8 @@ public class SwerveSubsystem extends SubsystemBase
       swerveDrive.stopOdometryThread();
     }
     setupPathPlanner();
+
+    System.out.println("finished Initialiing swerve");
   }
 
   /**

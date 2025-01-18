@@ -38,6 +38,7 @@ public class RobotContainer
   final         CommandXboxController driverXbox = new CommandXboxController(0);
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve"));
+  
 
   private final newsubsystem newsubsystem = new newsubsystem();
   // Applies deadbands and inverts controls because joysticks
@@ -145,12 +146,14 @@ public class RobotContainer
     if (Robot.isSimulation())
     {
       driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+      System.out.println("is a simulation");
     }
     if (DriverStation.isTest())
     {
       driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
       newsubsystem.setDefaultCommand(new newcommand(newsubsystem,(() -> driverXbox.a().getAsBoolean()),(() -> driverXbox.b().getAsBoolean())));
 
+      System.out.println("is test");
     } else
     {
       driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
@@ -168,6 +171,7 @@ public class RobotContainer
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightBumper().onTrue(Commands.none());
       */
+      System.out.println("is not test or simulation");
     }
 
   }
