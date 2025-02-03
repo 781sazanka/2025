@@ -85,11 +85,11 @@ public class SwerveSubsystem extends SubsystemBase
                                                 swervedrive.getOdometryHeading().getRadians(),
                                                 swervedrive.getMaximumChassisVelocity()));
 
-    SmartDashboard.getNumber("heading x", headingX.getAsDouble() );  
-    SmartDashboard.getNumber("heading y", headingX.getAsDouble() );  
-    SmartDashboard.getNumber("input x", scaledInputs.getX() );  
-    SmartDashboard.getNumber("input y", scaledInputs.getY() );  
-    SmartDashboard.getNumber("heading", swervedrive.getOdometryHeading().getRadians() );                                        
+    SmartDashboard.putNumber("heading x", headingX.getAsDouble() );  
+    SmartDashboard.putNumber("heading y", headingX.getAsDouble() );  
+    SmartDashboard.putNumber("input x", scaledInputs.getX() );  
+    SmartDashboard.putNumber("input y", scaledInputs.getY() );  
+    SmartDashboard.putNumber("heading", swervedrive.getOdometryHeading().getRadians() );                                        
     });
     }
 
