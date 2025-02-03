@@ -23,7 +23,7 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 public class RobotContainer
 {
 
-  final         CommandXboxController driverXbox = new CommandXboxController(0);
+  final         CommandXboxController driverXbox = new CommandXboxController(3);
   private final SwerveSubsystem drivebase  = new SwerveSubsystem();
 
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
