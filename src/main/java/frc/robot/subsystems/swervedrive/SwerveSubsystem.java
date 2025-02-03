@@ -74,7 +74,7 @@ public class SwerveSubsystem extends SubsystemBase
                                                         translationY.getAsDouble()), 0.8);
 
     // Make the robot move
-    swervedrive.driveFieldOriented(swervedrive.swerveController.getTargetSpeeds(scaledInputs.getX(), scaledInputs.getY(),
+    swervedrive.drive(swervedrive.swerveController.getTargetSpeeds(scaledInputs.getX(), scaledInputs.getY(),
                                                 headingX.getAsDouble(),
                                                 headingY.getAsDouble(),
                                                 swervedrive.getOdometryHeading().getRadians(),
