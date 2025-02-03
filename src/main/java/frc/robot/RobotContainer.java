@@ -32,6 +32,7 @@ public class RobotContainer
   public RobotContainer()
   {
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+  
     configureBindings();
   }
 
@@ -44,6 +45,7 @@ public class RobotContainer
    */
 
   public void configureBindings(){
+    
     Command swerve_Command = drivebase.driveCommand(() -> driverXbox.getRightX(),() -> driverXbox.getRightY(),() -> driverXbox.getLeftX(),() -> driverXbox.getLeftY());
     drivebase.setDefaultCommand(swerve_Command);
   }
