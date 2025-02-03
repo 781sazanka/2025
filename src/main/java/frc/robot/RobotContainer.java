@@ -26,16 +26,7 @@ public class RobotContainer
   final         CommandXboxController driverXbox = new CommandXboxController(3);
   private final SwerveSubsystem drivebase  = new SwerveSubsystem();
 
-  SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                () -> driverXbox.getLeftY() * -1,
-                                                                () -> driverXbox.getLeftX() * -1)
-                                                            .withControllerRotationAxis(driverXbox::getRightX)
-                                                            .deadband(OperatorConstants.DEADBAND)
-                                                            .scaleTranslation(0.8)
-                                                            .allianceRelativeControl(true);
 
-  SwerveInputStream driveRobotOriented = driveAngularVelocity.copy().robotRelative(true)
-                                                            .allianceRelativeControl(false);
 
 
   public RobotContainer()
