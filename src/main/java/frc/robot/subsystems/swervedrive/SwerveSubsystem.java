@@ -9,6 +9,8 @@ import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -43,7 +45,9 @@ public class SwerveSubsystem extends SubsystemBase
           throw new RuntimeException(e);
         }
 
-        swervedrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
+        swervedrive.resetOdometry(new Pose2d());
+        swervedrive.resetDriveEncoders();
+        swervedrive.setHeadingCorrection(true); // Heading correction should only be used while controlling the robot via angle.
         swervedrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
         swervedrive.setAngularVelocityCompensation(true,
                                                    true,
