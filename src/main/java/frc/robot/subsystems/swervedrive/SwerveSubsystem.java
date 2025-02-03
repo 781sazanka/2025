@@ -47,11 +47,9 @@ public class SwerveSubsystem extends SubsystemBase
 
         swervedrive.resetOdometry(new Pose2d());
         swervedrive.resetDriveEncoders();
-        swervedrive.setHeadingCorrection(true); // Heading correction should only be used while controlling the robot via angle.
-        swervedrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
-        swervedrive.setAngularVelocityCompensation(true,
-                                                   true,
-                                                   0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
+        //swervedrive.setAngularVelocityCompensation(true,
+        //                                           true,
+        //                                           0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
     }
 
     @Override
