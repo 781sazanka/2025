@@ -11,6 +11,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -79,6 +80,12 @@ public class SwerveSubsystem extends SubsystemBase
                                                 headingY.getAsDouble(),
                                                 swervedrive.getOdometryHeading().getRadians(),
                                                 swervedrive.getMaximumChassisVelocity()));
+
+    SmartDashboard.getNumber("heading x", headingX.getAsDouble() );  
+    SmartDashboard.getNumber("heading y", headingX.getAsDouble() );  
+    SmartDashboard.getNumber("input x", scaledInputs.getX() );  
+    SmartDashboard.getNumber("input y", scaledInputs.getY() );  
+    SmartDashboard.getNumber("heading", swervedrive.getOdometryHeading().getRadians() );                                        
     });
     }
 
