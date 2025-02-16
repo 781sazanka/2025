@@ -71,11 +71,11 @@ public class SwerveSubsystem extends SubsystemBase
     }
 
     public Command Stop(){
-      return runOnce(() -> swervedrive.lockPose());
+      return run(() -> swervedrive.lockPose());
     }
 
     public Command resetpos(){
-      return runOnce(() -> swervedrive.setChassisSpeeds(new ChassisSpeeds(0,0.1,0)));
+      return run(() -> swervedrive.setChassisSpeeds(new ChassisSpeeds(0,0.1,0)));
     }
 
     public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,DoubleSupplier headingY)
@@ -93,7 +93,7 @@ public class SwerveSubsystem extends SubsystemBase
                                                                           swervedrive.getOdometryHeading().getRadians(),
                                                                           swervedrive.getMaximumChassisVelocity());
 
-    swervedrive.drive(movement,true,new Translation2d(0.343, new Rotation2d(Math.PI/4) ));
+    swervedrive.drive(movement,false,new Translation2d(0.343, new Rotation2d(Math.PI/4) ));
 
     
     SmartDashboard.putNumber("input LX", translationX.getAsDouble() );  
