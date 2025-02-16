@@ -79,7 +79,9 @@ public class SwerveSubsystem extends SubsystemBase
                                                 headingX.getAsDouble(),
                                                 headingY.getAsDouble(),
                                                 swervedrive.getOdometryHeading().getRadians(),
-                                                swervedrive.getMaximumChassisVelocity()));
+                                                swervedrive.getMaximumChassisVelocity()),
+                                                true,
+                                                new Translation2d(0.343, new Rotation2d(Math.PI/4) ));
 
     
     SmartDashboard.putNumber("translationX", translationX.getAsDouble() );  
