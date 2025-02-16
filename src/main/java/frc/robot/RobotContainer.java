@@ -34,6 +34,8 @@ public class RobotContainer
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
   
     configureBindings();
+    driverXbox.button(3);
+    
   }
 
   /**

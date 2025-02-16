@@ -11,6 +11,6 @@
     "drive": 0.01,
     "angle": 0.01
   },
-  "wheelGripCoefficientOfFriction": 0,
+  "wheelGripCoefficientOfFriction": 0.5,
   "optimalVoltage": 12
 }

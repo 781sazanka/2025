@@ -68,6 +68,10 @@ public class SwerveSubsystem extends SubsystemBase
     return new PathPlannerAuto(pathName);
     }
 
+    public Command Stop(){
+      return runOnce(() -> swervedrive.lockPose());
+    }
+
     public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,DoubleSupplier headingY)
     {
     return run(() -> {
