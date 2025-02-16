@@ -6,7 +6,7 @@ package frc.robot;
 
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -23,7 +23,7 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 public class RobotContainer
 {
 
-  final         CommandXboxController driverXbox = new CommandXboxController(3);
+  final         CommandGenericHID driverXbox = new CommandGenericHID(3);
   private final SwerveSubsystem drivebase  = new SwerveSubsystem();
 
 
@@ -46,8 +46,8 @@ public class RobotContainer
 
   public void configureBindings(){
     
-    Command swerve_Command = drivebase.driveCommand(() -> driverXbox.getLeftX(),() -> driverXbox.getLeftY(),() -> driverXbox.getRightX(),() -> driverXbox.getRightY());
-    //drivebase.setDefaultCommand(swerve_Command);
+    Command swerve_Command = drivebase.driveCommand(() -> driverXbox.getRawAxis(0),() -> driverXbox.getRawAxis(1),() -> driverXbox.getRawAxis(4),() -> driverXbox.getRawAxis(5));
+    drivebase.setDefaultCommand(swerve_Command);
   }
 
 
