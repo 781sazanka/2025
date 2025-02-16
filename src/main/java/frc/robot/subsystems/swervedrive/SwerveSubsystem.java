@@ -48,6 +48,7 @@ public class SwerveSubsystem extends SubsystemBase
 
         swervedrive.resetOdometry(new Pose2d());
         swervedrive.resetDriveEncoders();
+        swervedrive.setHeadingCorrection(true)
         //swervedrive.setChassisSpeeds(new ChassisSpeeds(0,0,0));
 
         //swervedrive.setAngularVelocityCompensation(true,true,0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
