@@ -74,7 +74,7 @@ public class SwerveSubsystem extends SubsystemBase
     }
 
     public Command resetpos(){
-      return runOnce(() -> swervedrive.setChassisSpeeds(new ChassisSpeeds(0,0,0)));
+      return runOnce(() -> swervedrive.setChassisSpeeds(new ChassisSpeeds(0,0.1,0)));
     }
 
     public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,DoubleSupplier headingY)
