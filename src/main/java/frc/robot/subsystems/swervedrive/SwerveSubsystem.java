@@ -12,6 +12,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -75,22 +76,23 @@ public class SwerveSubsystem extends SubsystemBase
                                                         translationY.getAsDouble()), 0.8);
 
     // Make the robot move
-    swervedrive.drive(swervedrive.swerveController.getTargetSpeeds(scaledInputs.getX(), scaledInputs.getY(),
-                                                headingX.getAsDouble(),
-                                                headingY.getAsDouble(),
-                                                swervedrive.getOdometryHeading().getRadians(),
-                                                swervedrive.getMaximumChassisVelocity()),
-                                                true,
-                                                new Translation2d(0.343, new Rotation2d(Math.PI/4) ));
+    ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(scaledInputs.getX(), 
+                                                                          scaledInputs.getY()*-1,
+                                                                          headingX.getAsDouble(),
+                                                                          headingY.getAsDouble()*-1,
+                                                                          swervedrive.getOdometryHeading().getRadians(),
+                                                                          swervedrive.getMaximumChassisVelocity());
+
+    swervedrive.drive(movement,true,new Translation2d(0.343, new Rotation2d(Math.PI/4) ));
 
     
-    SmartDashboard.putNumber("translationX", translationX.getAsDouble() );  
-    SmartDashboard.putNumber("translationY", translationY.getAsDouble()); 
-    SmartDashboard.putNumber("heading x", headingX.getAsDouble() );  
-    SmartDashboard.putNumber("heading y", headingY.getAsDouble() );  
-    SmartDashboard.putNumber("input x", scaledInputs.getX() );  
-    SmartDashboard.putNumber("input y", scaledInputs.getY() );  
-    SmartDashboard.putNumber("heading", swervedrive.getOdometryHeading().getRadians() );                                        
+    SmartDashboard.putNumber("input LX", translationX.getAsDouble() );  
+    SmartDashboard.putNumber("input LY", translationY.getAsDouble()); 
+    SmartDashboard.putNumber("input RX", headingX.getAsDouble() );  
+    SmartDashboard.putNumber("input RY", headingY.getAsDouble() );  
+    SmartDashboard.putNumber("VX m/s", movement.vxMetersPerSecond );  
+    SmartDashboard.putNumber("VY m/s", movement.vyMetersPerSecond);  
+    SmartDashboard.putNumber("angular velocity", movement.omegaRadiansPerSecond);                                        
     });
     }
 
