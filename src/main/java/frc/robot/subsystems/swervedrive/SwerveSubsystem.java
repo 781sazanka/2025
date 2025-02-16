@@ -73,9 +73,11 @@ public class SwerveSubsystem extends SubsystemBase
     {
     return run(() -> {
 
+    Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationX.getAsDouble(),
+                                                        translationY.getAsDouble()), 0.8);
 
     // Make the robot move
-    swervedrive.drive(swervedrive.swerveController.getTargetSpeeds(translationX.getAsDouble(), translationY.getAsDouble(),
+    swervedrive.drive(swervedrive.swerveController.getTargetSpeeds(scaledInputs.getX(), scaledInputs.getY(),
                                                 headingX.getAsDouble(),
                                                 headingY.getAsDouble(),
                                                 swervedrive.getOdometryHeading().getRadians(),
@@ -85,7 +87,9 @@ public class SwerveSubsystem extends SubsystemBase
     SmartDashboard.putNumber("translationX", translationX.getAsDouble() );  
     SmartDashboard.putNumber("translationY", translationY.getAsDouble()); 
     SmartDashboard.putNumber("heading x", headingX.getAsDouble() );  
-    SmartDashboard.putNumber("heading y", headingY.getAsDouble() );   
+    SmartDashboard.putNumber("heading y", headingY.getAsDouble() );  
+    SmartDashboard.putNumber("input x", scaledInputs.getX() );  
+    SmartDashboard.putNumber("input y", scaledInputs.getY() );  
     SmartDashboard.putNumber("heading", swervedrive.getOdometryHeading().getRadians() );                                        
     });
     }
