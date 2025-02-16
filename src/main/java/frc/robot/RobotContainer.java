@@ -35,6 +35,7 @@ public class RobotContainer
   
     configureBindings();
     driverXbox.button(3).whileTrue(drivebase.Stop());
+    driverXbox.button(2).whileTrue(drivebase.resetpos());
     
   }
 
