@@ -34,7 +34,7 @@ public class RobotContainer
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
   
     configureBindings();
-    driverXbox.button(3).onTrue(drivebase.Stop());
+    driverXbox.button(3).whileTrue(drivebase.Stop());
     
   }
 
