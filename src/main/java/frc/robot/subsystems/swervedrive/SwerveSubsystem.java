@@ -100,8 +100,7 @@ public class SwerveSubsystem extends SubsystemBase
     
     SmartDashboard.putNumber("input LX", translationX.getAsDouble() );  
     SmartDashboard.putNumber("input LY", translationY.getAsDouble()); 
-    SmartDashboard.putNumber("input RX", headingX.getAsDouble() );  
-    SmartDashboard.putNumber("input RY", headingY.getAsDouble() );  
+    SmartDashboard.putNumber("rotation", rotation );  
     SmartDashboard.putNumber("VX m/s", movement.vxMetersPerSecond );  
     SmartDashboard.putNumber("VY m/s", movement.vyMetersPerSecond);  
     SmartDashboard.putNumber("angular velocity", movement.omegaRadiansPerSecond);                                        
