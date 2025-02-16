@@ -47,7 +47,7 @@ public class RobotContainer
   public void configureBindings(){
     
     Command swerve_Command = drivebase.driveCommand(() -> driverXbox.getLeftX(),() -> driverXbox.getLeftY(),() -> driverXbox.getRightX(),() -> driverXbox.getRightY());
-    drivebase.setDefaultCommand(swerve_Command);
+    //drivebase.setDefaultCommand(swerve_Command);
   }
 
 
