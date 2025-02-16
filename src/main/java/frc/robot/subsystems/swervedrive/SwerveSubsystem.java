@@ -79,18 +79,19 @@ public class SwerveSubsystem extends SubsystemBase
       return run(() -> swervedrive.setChassisSpeeds(new ChassisSpeeds(0,0.1,0)));
     }
 
-    public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,DoubleSupplier headingY)
+    public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier heading)
     {
     return run(() -> {
 
     Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationX.getAsDouble(),
                                                         translationY.getAsDouble()), 0.8);
 
+    double rotation = heading.getAsDouble()*180;
+
     // Make the robot move
     ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(scaledInputs.getX(), 
                                                                           scaledInputs.getY()*-1,
-                                                                          headingX.getAsDouble(),
-                                                                          headingY.getAsDouble()*-1,
+                                                                          rotation,
                                                                           swervedrive.getOdometryHeading().getRadians(),
                                                                           swervedrive.getMaximumChassisVelocity());
 
