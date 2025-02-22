@@ -122,7 +122,9 @@ public class SwerveSubsystem extends SubsystemBase
                                                                           swervedrive.getOdometryHeading().getRadians(),
                                                                           swervedrive.getMaximumChassisVelocity());
 
-    swervedrive.drive(movement,false,new Translation2d(0.343, new Rotation2d(Math.PI/4) ));
+    //swervedrive.drive(movement,false,new Translation2d(0.343, new Rotation2d(Math.PI/4) ));
+
+    swervedrive.driveFieldOriented(movement,new Translation2d(0.343, new Rotation2d(Math.PI/4) ));
 
     
     SmartDashboard.putNumber("input LX", translationX.getAsDouble() );  
