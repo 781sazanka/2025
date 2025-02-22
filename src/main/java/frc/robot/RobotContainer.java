@@ -34,8 +34,18 @@ public class RobotContainer
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
   
     configureBindings();
-    driverXbox.button(3).whileTrue(drivebase.Stop());
-    driverXbox.button(2).whileTrue(drivebase.resetpos());
+    Command stop = drivebase.Stop();
+    stop.addRequirements(drivebase);
+    driverXbox.button(3).whileTrue(stop);
+
+    Command reset = drivebase.resetpos();
+    reset.addRequirements(drivebase);
+    driverXbox.button(3).whileTrue(reset);
+
+
+    Command Drivetotarget = drivebase.drivetotarget();
+    Drivetotarget.addRequirements(drivebase);
+    driverXbox.button(4).whileTrue(Drivetotarget);
     
   }
 
@@ -49,8 +59,8 @@ public class RobotContainer
 
   public void configureBindings(){
     
-    Command swerve_Command = drivebase.driveCommand(() -> driverXbox.getRawAxis(0),() -> driverXbox.getRawAxis(1),() -> driverXbox.getRawAxis(2));
-    drivebase.setDefaultCommand(swerve_Command);
+    Command swerve_Command = drivebase.driveCommand(() -> driverXbox.getRawAxis(0),() -> driverXbox.getRawAxis(1),() -> driverXbox.getRawAxis(2));    drivebase.setDefaultCommand(swerve_Command);
+
   }
  
 

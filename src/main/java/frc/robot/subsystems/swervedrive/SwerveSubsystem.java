@@ -17,6 +17,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import swervelib.SwerveDrive;
@@ -83,7 +84,7 @@ public class SwerveSubsystem extends SubsystemBase
       return run(() -> swervedrive.lockPose());
     }
 
-    public Command drivetotarget(float dist,float xoffset,int[] follow ){
+    public Command drivetotarget (){
       return run(() -> {
         LimelightResults results = LimelightHelpers.getLatestResults("");
         if (results.valid) {
@@ -98,6 +99,7 @@ public class SwerveSubsystem extends SubsystemBase
           }
         }
       });
+
     }
 
     public Command resetpos(){
@@ -111,7 +113,7 @@ public class SwerveSubsystem extends SubsystemBase
     Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationX.getAsDouble(),
                                                         translationY.getAsDouble()), 0.8);
 
-    double rotation = heading.getAsDouble()*180;
+    double rotation = heading.getAsDouble();
 
     // Make the robot move
     ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(scaledInputs.getX(), 
