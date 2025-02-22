@@ -10,6 +10,7 @@ import java.util.function.DoubleSupplier;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -19,11 +20,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import swervelib.SwerveDrive;
+import swervelib.SwerveInputStream;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
+import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.LimelightResults;
+import frc.robot.LimelightHelpers.LimelightTarget_Fiducial;
+import frc.robot.LimelightHelpers.RawFiducial;
+
+import java.util.Arrays;
 
 
 public class SwerveSubsystem extends SubsystemBase
@@ -73,6 +81,23 @@ public class SwerveSubsystem extends SubsystemBase
 
     public Command Stop(){
       return run(() -> swervedrive.lockPose());
+    }
+
+    public Command drivetotarget(float dist,float xoffset,int[] follow ){
+      return run(() -> {
+        LimelightResults results = LimelightHelpers.getLatestResults("");
+        if (results.valid) {
+          if(results.targets_Fiducials.length > 0){
+            LimelightTarget_Fiducial tag = results.targets_Fiducials[0];
+            double id = tag.fiducialID; 
+            Pose3d tagPoseCamera = tag.getTargetPose_CameraSpace();
+            Pose2d pose2d = tagPoseCamera.toPose2d();
+            Translation2d translation =  pose2d.getTranslation();
+            ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(translation.getX(), translation.getY()*-1,translation.getAngle().getRadians(),swervedrive.getOdometryHeading().getRadians(),swervedrive.getMaximumChassisVelocity());
+            swervedrive.drive(movement,false,new Translation2d(0.343, new Rotation2d(Math.PI/4) ));
+          }
+        }
+      });
     }
 
     public Command resetpos(){
