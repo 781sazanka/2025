@@ -1,4 +1,4 @@
-package frc.robot.commands.newcommand;
+package frc.robot.commands;
 
 import frc.robot.subsystems.newsubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
