@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -42,7 +43,9 @@ public class RobotContainer {
 
   private final newsubsystem newsubsystem = new newsubsystem();
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  double xboxtrigger;
   public RobotContainer() {
+    
     if (Robot.isSimulation())
     {
       //driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
@@ -51,14 +54,24 @@ public class RobotContainer {
     if (DriverStation.isTest())
     {
       //driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-      newsubsystem.setDefaultCommand(new newcommand(newsubsystem,(() -> driverXbox.leftBumper().getAsBoolean()),(() -> driverXbox.leftTrigger(0.5).getAsBoolean())));
-
+      newsubsystem.setDefaultCommand(
+      new newcommand(
+          newsubsystem,
+          () -> driverXbox.leftBumper().getAsBoolean(),
+          () -> driverXbox.getLeftTriggerAxis() > 0.1 // トリガーが 0.1 以上なら true
+      )
+  );
       System.out.println("is test");
     } else
     {
       //driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-      newsubsystem.setDefaultCommand(new newcommand(newsubsystem,(() -> driverXbox.leftBumper().getAsBoolean()),(() -> driverXbox.leftTrigger(0.5).getAsBoolean())));
-      System.out.println("is not test or simulation");
+      newsubsystem.setDefaultCommand(
+      new newcommand(
+          newsubsystem,
+          () -> driverXbox.leftBumper().getAsBoolean(),
+          () -> driverXbox.getLeftTriggerAxis() > 0.1 // トリガーが 0.1 以上なら true
+      )
+  );
     }
     // Configure the trigger bindings
     configureBindings();
