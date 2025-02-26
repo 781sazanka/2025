@@ -42,6 +42,13 @@ public class RobotContainer {
   private final newsubsystem newsubsystem = new newsubsystem();
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    double driveTrigger = driverXbox.getLeftTriggerAxis();
+    boolean LeftTrigger;
+    if (driveTrigger > 0.5){
+      LeftTrigger = true;
+    }else{
+      LeftTrigger = false;
+    }
     if (Robot.isSimulation())
     {
       //driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
@@ -50,13 +57,14 @@ public class RobotContainer {
     if (DriverStation.isTest())
     {
       //driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-      newsubsystem.setDefaultCommand(new newcommand(newsubsystem,(() -> driverXbox.leftBumper().getAsBoolean()),(() -> driverXbox.rightBumper().getAsBoolean())));
+      newsubsystem.setDefaultCommand(new newcommand(newsubsystem,(() -> driverXbox.leftBumper().getAsBoolean()),(() -> driverXbox.leftTrigger().getAsBoolean())));
 
       System.out.println("is test");
     } else
     {
       //driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-      newsubsystem.setDefaultCommand(new newcommand(newsubsystem,(() -> driverXbox.leftBumper().getAsBoolean()),(() -> driverXbox.rightBumper().getAsBoolean())));
+      newsubsystem.setDefaultCommand(new newcommand(newsubsystem,(() -> driverXbox.leftBumper().getAsBoolean()),(() -> driverXbox.leftTrigger().getAsBoolean())));
+
       System.out.println("is not test or simulation");
     }
     // Configure the trigger bindings

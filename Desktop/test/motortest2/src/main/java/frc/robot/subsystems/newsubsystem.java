@@ -6,12 +6,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 public class newsubsystem extends SubsystemBase {
-    //private TalonFX m_motor1 = new TalonFX(1,"rio"); 
-    final SparkMax m_motor1 = new SparkMax(4, MotorType.kBrushless);
+    private TalonFX m_motor1 = new TalonFX(1,"rio"); 
+    //final SparkMax m_motor1 = new SparkMax(4, MotorType.kBrushless);
     public newsubsystem(){}
 
     public void forwards(){
-        m_motor1.set(0.9);
+        m_motor1.set(0.1);
     }
 
     public void stop(){
@@ -20,7 +20,7 @@ public class newsubsystem extends SubsystemBase {
 
 
     public void backwards(){
-        m_motor1.set(-0.9);
+        m_motor1.set(-0.1);
     }
 }
 
