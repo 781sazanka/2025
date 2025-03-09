@@ -105,8 +105,7 @@ public class SwerveSubsystem extends SubsystemBase
           if(results.targets_Fiducials.length > 0){
             LimelightTarget_Fiducial tag = results.targets_Fiducials[0];
             double id = tag.fiducialID; 
-            Pose3d tagPoseCamera = tag.getTargetPose_CameraSpace();
-            Pose2d pose2d = tagPoseCamera.toPose2d();
+            Pose2d pose2d = tag.getTargetPose_CameraSpace2D();
             Translation2d translation =  pose2d.getTranslation();
             ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(translation.getX(), translation.getY()*-1,translation.getAngle().getRadians(),swervedrive.getOdometryHeading().getRadians(),swervedrive.getMaximumChassisVelocity());
             swervedrive.drive(movement,false,new Translation2d(0, 0 ));
