@@ -107,7 +107,12 @@ public class SwerveSubsystem extends SubsystemBase
 
         ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(tx,ty,yaw,swervedrive.getOdometryHeading().getRadians(),swervedrive.getMaximumChassisVelocity());
 
+        SmartDashboard.putNumber("tx", tx );  
+        SmartDashboard.putNumber("ty", ty);  
+        SmartDashboard.putNumber("yaw", yaw);  
         swervedrive.driveFieldOriented(movement,new Translation2d(0,0));
+
+
       });
 
     }

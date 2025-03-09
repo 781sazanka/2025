@@ -36,7 +36,7 @@ public class RobotContainer
     configureBindings();
     Command stop = drivebase.Stop();
     stop.addRequirements(drivebase);
-    driverXbox.button(3).whileTrue(stop);
+    driverXbox.button(2).whileTrue(stop);
 
     Command reset = drivebase.resetpos();
     reset.addRequirements(drivebase);
@@ -46,6 +46,7 @@ public class RobotContainer
     Command Drivetotarget = drivebase.drivetotarget();
     Drivetotarget.addRequirements(drivebase);
     driverXbox.button(4).whileTrue(Drivetotarget);
+
     
   }
 
