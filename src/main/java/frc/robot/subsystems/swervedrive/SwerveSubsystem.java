@@ -112,13 +112,19 @@ public class SwerveSubsystem extends SubsystemBase
         SmartDashboard.putNumber("yaw", yaw);  
         swervedrive.driveFieldOriented(movement,new Translation2d(0,0));
 
+        SmartDashboard.putString("MODE", "Driving to target");
+
 
       });
 
     }
 
     public Command resetpos(){
-      return run(() -> swervedrive.setChassisSpeeds(new ChassisSpeeds(0,0,0)));
+      return run(() -> {
+        swervedrive.setChassisSpeeds(new ChassisSpeeds(0,0,0));
+        SmartDashboard.putString("MODE", "Resetting...");
+      });
+      
     }
 
     public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier heading)
@@ -146,7 +152,9 @@ public class SwerveSubsystem extends SubsystemBase
     SmartDashboard.putNumber("rotation", rotation );  
     SmartDashboard.putNumber("VX m/s", movement.vxMetersPerSecond );  
     SmartDashboard.putNumber("VY m/s", movement.vyMetersPerSecond);  
-    SmartDashboard.putNumber("angular velocity", movement.omegaRadiansPerSecond);                                        
+    SmartDashboard.putNumber("angular velocity", movement.omegaRadiansPerSecond);  
+    
+    SmartDashboard.putString("MODE", "Normal Running");
     });
     }
 
