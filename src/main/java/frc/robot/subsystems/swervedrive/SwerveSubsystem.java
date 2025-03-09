@@ -5,6 +5,7 @@
 package frc.robot.subsystems.swervedrive;
 
 import java.io.File;
+import java.security.cert.X509CRL;
 import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -31,6 +32,7 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.LimelightResults;
 import frc.robot.LimelightHelpers.LimelightTarget_Fiducial;
+import frc.robot.LimelightHelpers.RawDetection;
 import frc.robot.LimelightHelpers.RawFiducial;
 
 import java.util.Arrays;
@@ -100,27 +102,47 @@ public class SwerveSubsystem extends SubsystemBase
 
     public Command drivetotarget (){
       return run(() -> {
-        LimelightResults results = LimelightHelpers.getLatestResults("");
-        if (results.valid) {
-          if(results.targets_Fiducials.length > 0){
-            LimelightTarget_Fiducial tag = results.targets_Fiducials[0];
-            double id = tag.fiducialID; 
-            Pose2d pose2d = tag.getTargetPose_CameraSpace2D();
-            Translation2d translation =  pose2d.getTranslation();
-            ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(translation.getX(), translation.getY()*-1,translation.getAngle().getRadians(),swervedrive.getOdometryHeading().getRadians(),swervedrive.getMaximumChassisVelocity());
-            swervedrive.drive(movement,false,new Translation2d(0, 0 ));
+        RawDetection[] results = LimelightHelpers.getRawDetections("");
+          if(results.length > 0){
+            RawDetection tag = results[0];
+            double tx = tag.txnc;
+            double ty = tag.tync;
+
+            double area = tag.ta;
+
+            double top_left_x = tag.corner0_X;
+            double top_left_y = tag.corner0_Y;
+
+            double top_right_x = tag.corner1_X;
+            double top_right_y = tag.corner1_Y;
+
+            double bottom_left_x = tag.corner3_X;
+            double bottom_left_y = tag.corner3_Y;
+
+            double bottom_right_x = tag.corner2_X;
+            double bottom_right_y = tag.corner2_Y;
+
+            double dist_right = top_right_y - bottom_right_y;
+            double dist_left = top_left_y - bottom_left_y;
+
+            double rotation =  (dist_left - dist_right)/480*Math.PI/2;
+            double speed = 0.1 - area;
+            double angle = (tx - 320)/320*Math.PI/4;
+
+            Translation2d translation = new Translation2d(speed,new Rotation2d(angle));
+            ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(translation.getX(), translation.getY(),rotation,swervedrive.getOdometryHeading().getRadians(),swervedrive.getMaximumChassisVelocity());
+            swervedrive.drive(movement,new Translation2d(0, 0 ));
+
+
           }
-        }
       });
 
     }
 
+
+
     public Command resetpos(){
-      return run(() -> {
-        swervedrive.setChassisSpeeds(new ChassisSpeeds(0,0,0));
-        SmartDashboard.putString("MODE", "Resetting...");
-      });
-      
+      return run(() -> swervedrive.setChassisSpeeds(new ChassisSpeeds(0,0.1,0)));
     }
 
     public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier heading)
@@ -140,7 +162,7 @@ public class SwerveSubsystem extends SubsystemBase
 
     //swervedrive.drive(movement,false,new Translation2d(0.343, new Rotation2d(Math.PI/4) ));
 
-    swervedrive.driveFieldOriented(movement,new Translation2d(0,0));
+    swervedrive.driveFieldOriented(movement,new Translation2d(0,0 ));
 
     
     SmartDashboard.putNumber("input LX", translationX.getAsDouble() );  
@@ -148,9 +170,7 @@ public class SwerveSubsystem extends SubsystemBase
     SmartDashboard.putNumber("rotation", rotation );  
     SmartDashboard.putNumber("VX m/s", movement.vxMetersPerSecond );  
     SmartDashboard.putNumber("VY m/s", movement.vyMetersPerSecond);  
-    SmartDashboard.putNumber("angular velocity", movement.omegaRadiansPerSecond);  
-    
-    SmartDashboard.putString("MODE", "Normal Running");
+    SmartDashboard.putNumber("angular velocity", movement.omegaRadiansPerSecond);                                        
     });
     }
 
