@@ -100,32 +100,18 @@ public class SwerveSubsystem extends SubsystemBase
 
     public Command drivetotarget (){
       return run(() -> {
-        double[] results = NetworkTableInstance.getDefault().getTable("limelight").getEntry("targetpose_cameraspace").getDoubleArray(new double[6]);
-
-        SmartDashboard.putNumberArray("results",results);
-        System.out.println(results);
-        if (results.length == 6){
-          double tx = results[0];
-          double ty = results[1];
-          double yaw = Math.toRadians(results[4]);
-  
-          ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(tx,ty,yaw,swervedrive.getOdometryHeading().getRadians(),swervedrive.getMaximumChassisVelocity());
-  
-          SmartDashboard.putNumber("tx from code", tx );  
-          SmartDashboard.putNumber("ty from code", ty);  
-          SmartDashboard.putNumber("yaw from code", yaw);  
-          swervedrive.drive(movement,new Translation2d(0,0));
-
-          System.out.println("ChassisSpeeds: vx=" + movement.vxMetersPerSecond +", vy=" + movement.vyMetersPerSecond +", omega=" + movement.omegaRadiansPerSecond);
-
-        }else{
-          System.out.println("less than 6 elements in list so plz help");
+        LimelightResults results = LimelightHelpers.getLatestResults("");
+        if (results.valid) {
+          if(results.targets_Fiducials.length > 0){
+            LimelightTarget_Fiducial tag = results.targets_Fiducials[0];
+            double id = tag.fiducialID; 
+            Pose3d tagPoseCamera = tag.getTargetPose_CameraSpace();
+            Pose2d pose2d = tagPoseCamera.toPose2d();
+            Translation2d translation =  pose2d.getTranslation();
+            ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(translation.getX(), translation.getY()*-1,translation.getAngle().getRadians(),swervedrive.getOdometryHeading().getRadians(),swervedrive.getMaximumChassisVelocity());
+            swervedrive.drive(movement,false,new Translation2d(0, 0 ));
+          }
         }
-
-
-        SmartDashboard.putString("MODE", "Driving to target");
-
-
       });
 
     }
