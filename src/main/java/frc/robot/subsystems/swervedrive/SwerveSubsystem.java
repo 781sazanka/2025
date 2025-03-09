@@ -101,16 +101,21 @@ public class SwerveSubsystem extends SubsystemBase
     public Command drivetotarget (){
       return run(() -> {
         double[] results = NetworkTableInstance.getDefault().getTable("limelight").getEntry("targetpose_cameraspace").getDoubleArray(new double[6]);
-        double tx = results[0];
-        double ty = results[1];
-        double yaw = results[4]/180*Math.PI;
 
-        ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(tx,ty,yaw,swervedrive.getOdometryHeading().getRadians(),swervedrive.getMaximumChassisVelocity());
+        SmartDashboard.putNumberArray("results",results);
+        if (results.length == 6){
+          double tx = results[0];
+          double ty = results[1];
+          double yaw = results[4]/180*Math.PI;
+  
+          ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(tx,ty,yaw,swervedrive.getOdometryHeading().getRadians(),swervedrive.getMaximumChassisVelocity());
+  
+          SmartDashboard.putNumber("tx from code", tx );  
+          SmartDashboard.putNumber("ty from code", ty);  
+          SmartDashboard.putNumber("yaw from code", yaw);  
+          swervedrive.driveFieldOriented(movement,new Translation2d(0,0));
 
-        SmartDashboard.putNumber("tx", tx );  
-        SmartDashboard.putNumber("ty", ty);  
-        SmartDashboard.putNumber("yaw", yaw);  
-        swervedrive.driveFieldOriented(movement,new Translation2d(0,0));
+        }
 
         SmartDashboard.putString("MODE", "Driving to target");
 
