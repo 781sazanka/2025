@@ -9,11 +9,13 @@ import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,7 +28,6 @@ import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
-
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.LimelightResults;
 import frc.robot.LimelightHelpers.LimelightTarget_Fiducial;
@@ -39,7 +40,6 @@ public class SwerveSubsystem extends SubsystemBase
 {
 
     private SwerveDrive swervedrive;
-
     public SwerveSubsystem(){
 
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -66,7 +66,21 @@ public class SwerveSubsystem extends SubsystemBase
     @Override
     public void periodic()
     {
-      // When vision is enabled we must manually update odometry in SwerveDrive
+    /* 
+
+    //こちら大会本番で使うかもしれないフィールドビジョンローカライゼーション　動くかどうかはまじで知らん。
+
+      LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+      if (limelightMeasurement.tagCount >= 2) {  // 複数のタグが見える場合のみ測定を信頼する
+        swervedrive.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
+        swervedrive.addVisionMeasurement(
+              limelightMeasurement.pose,
+              limelightMeasurement.timestampSeconds
+      );
+      }
+
+    */
+  
     }
   
     @Override
@@ -86,32 +100,27 @@ public class SwerveSubsystem extends SubsystemBase
 
     public Command drivetotarget (){
       return run(() -> {
-        LimelightResults results = LimelightHelpers.getLatestResults("");
-        if (results.valid) {
-          if(results.targets_Fiducials.length > 0){
-            LimelightTarget_Fiducial tag = results.targets_Fiducials[0];
-            double id = tag.fiducialID; 
-            Pose3d tagPoseCamera = tag.getTargetPose_CameraSpace();
-            Pose2d pose2d = tagPoseCamera.toPose2d();
-            Translation2d translation =  pose2d.getTranslation();
-            ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(translation.getX(), translation.getY()*-1,translation.getAngle().getRadians(),swervedrive.getOdometryHeading().getRadians(),swervedrive.getMaximumChassisVelocity());
-            swervedrive.drive(movement,false,new Translation2d(0.343, new Rotation2d(Math.PI/4) ));
-          }
-        }
+        double[] results = NetworkTableInstance.getDefault().getTable("limelight").getEntry("targetpose_cameraspace").getDoubleArray(new double[6]);
+        double tx = results[0];
+        double ty = results[1];
+        double yaw = results[4]/180*Math.PI;
+
+        ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(tx,ty,yaw,swervedrive.getOdometryHeading().getRadians(),swervedrive.getMaximumChassisVelocity());
+
+        swervedrive.driveFieldOriented(movement,new Translation2d(0.343, new Rotation2d(Math.PI/4) ));
       });
 
     }
 
     public Command resetpos(){
-      return run(() -> swervedrive.setChassisSpeeds(new ChassisSpeeds(0,0.1,0)));
+      return run(() -> swervedrive.setChassisSpeeds(new ChassisSpeeds(0,0,0)));
     }
 
     public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier heading)
     {
     return run(() -> {
 
-    Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationX.getAsDouble(),
-                                                        translationY.getAsDouble()), 0.8);
+    Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationX.getAsDouble(),translationY.getAsDouble()), 0.8);
 
     double rotation = heading.getAsDouble();
 
