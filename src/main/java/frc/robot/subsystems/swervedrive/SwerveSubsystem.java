@@ -107,7 +107,7 @@ public class SwerveSubsystem extends SubsystemBase
 
         ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(tx,ty,yaw,swervedrive.getOdometryHeading().getRadians(),swervedrive.getMaximumChassisVelocity());
 
-        swervedrive.driveFieldOriented(movement,new Translation2d(0.343, new Rotation2d(Math.PI/4) ));
+        swervedrive.driveFieldOriented(movement,new Translation2d(0,0));
       });
 
     }
@@ -133,7 +133,7 @@ public class SwerveSubsystem extends SubsystemBase
 
     //swervedrive.drive(movement,false,new Translation2d(0.343, new Rotation2d(Math.PI/4) ));
 
-    swervedrive.driveFieldOriented(movement,new Translation2d(0.343, new Rotation2d(Math.PI/4) ));
+    swervedrive.driveFieldOriented(movement,new Translation2d(0,0));
 
     
     SmartDashboard.putNumber("input LX", translationX.getAsDouble() );  
