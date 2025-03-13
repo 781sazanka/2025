@@ -36,6 +36,7 @@ import frc.robot.LimelightHelpers.LimelightTarget_Fiducial;
 import frc.robot.LimelightHelpers.RawFiducial;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.config.PIDConstants;
 
@@ -67,9 +68,12 @@ public class SwerveSubsystem extends SubsystemBase
         //swervedrive.setChassisSpeeds(new ChassisSpeeds(0,0,0));
 
         //swervedrive.setAngularVelocityCompensation(true,true,0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
+    
 
+    NamedCommands.registerCommand("exampleCommand", this.drivetotarget());
+    NamedCommands.registerCommand("STOP", this.Stop());
     RobotConfig config;
-
+    
     try{
       config = RobotConfig.fromGUISettings();
     } catch (Exception e) {
