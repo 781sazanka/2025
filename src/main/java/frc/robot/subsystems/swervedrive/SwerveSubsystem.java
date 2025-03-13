@@ -5,7 +5,6 @@
 package frc.robot.subsystems.swervedrive;
 
 import java.io.File;
-import java.security.cert.X509CRL;
 import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -32,7 +31,6 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.LimelightResults;
 import frc.robot.LimelightHelpers.LimelightTarget_Fiducial;
-import frc.robot.LimelightHelpers.RawDetection;
 import frc.robot.LimelightHelpers.RawFiducial;
 
 import java.util.Arrays;
@@ -100,64 +98,31 @@ public class SwerveSubsystem extends SubsystemBase
       return run(() -> swervedrive.lockPose());
     }
 
-    public Command drivetotarget() {
+    public Command drivetotarget (){
       return run(() -> {
-          RawDetection[] results = LimelightHelpers.getRawDetections("");
-          if (results.length > 0) {
-              RawDetection tag = results[0];
-              double tx = tag.txnc;
-              double ty = tag.tync;
-              double area = tag.ta;
-  
-              double top_left_x = tag.corner0_X;
-              double top_left_y = tag.corner0_Y;
-              double top_right_x = tag.corner1_X;
-              double top_right_y = tag.corner1_Y;
-              double bottom_left_x = tag.corner3_X;
-              double bottom_left_y = tag.corner3_Y;
-              double bottom_right_x = tag.corner2_X;
-              double bottom_right_y = tag.corner2_Y;
-  
-              // Rotation calculation (still may need fine-tuning)
-              double dist_right = top_right_y - bottom_right_y;
-              double dist_left = top_left_y - bottom_left_y;
-              double rotation = (dist_left - dist_right) / 480 * Math.PI / 2; // adjust scaling factor as needed
-  
-              // Speed adjustment (consider refining this)
-              double speed = Math.max(0.00, 0.1 - area); // Avoiding negative speeds
-  
-              // Angle calculation (you might want to adjust the scaling factor here)
-              double angle = (tx - 320) / 320 * Math.PI / 4;
-  
-              // Translation2d used to control forward movement and rotation
-              Translation2d translation = new Translation2d(speed, new Rotation2d(angle));
-  
-              // Convert translation to chassis speeds
-              ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(
-                  translation.getX(),
-                  translation.getY(),
-                  rotation,
-                  swervedrive.getOdometryHeading().getRadians(),
-                  swervedrive.getMaximumChassisVelocity()
-              );
-  
-              // Drive the robot based on calculated speeds
-              swervedrive.drive(movement, new Translation2d(0, 0));
-  
-              // Optionally log data for debugging
-              SmartDashboard.putNumber("tx", tx);
-              SmartDashboard.putNumber("ty", ty);
-              SmartDashboard.putNumber("area", area);
-              SmartDashboard.putNumber("rotation", rotation);
-              SmartDashboard.putNumber("speed", speed);
-              SmartDashboard.putNumber("angle", angle);
-          }
+        double[] results = NetworkTableInstance.getDefault().getTable("limelight").getEntry("targetpose_cameraspace").getDoubleArray(new double[6]);
+        Pose2d pose = LimelightHelpers.toPose2D(results);
+
+        double rotation = pose.getRotation().getRadians();
+        double x = pose.getX();
+        double y = pose.getY();
+
+
+        ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(x, y,rotation,swervedrive.getOdometryHeading().getRadians(),swervedrive.getMaximumChassisVelocity());
+
+        SmartDashboard.putNumber("drivetotarget/x", x );  
+        SmartDashboard.putNumber("drivetotarget/y", y); 
+        SmartDashboard.putNumber("drivetotarget/rotation", rotation );  
+        SmartDashboard.putNumber("drivetotarget/VX", movement.vxMetersPerSecond );  
+        SmartDashboard.putNumber("drivetotarget/VY", movement.vyMetersPerSecond);  
+        SmartDashboard.putNumber("drivetotarget/angular velocity", movement.omegaRadiansPerSecond);   
+                                    
+
+
+
       });
-  }
-  
-  
 
-
+    }
 
     public Command resetpos(){
       return run(() -> swervedrive.setChassisSpeeds(new ChassisSpeeds(0,0.1,0)));
@@ -180,7 +145,7 @@ public class SwerveSubsystem extends SubsystemBase
 
     //swervedrive.drive(movement,false,new Translation2d(0.343, new Rotation2d(Math.PI/4) ));
 
-    swervedrive.driveFieldOriented(movement,new Translation2d(0,0 ));
+    swervedrive.driveFieldOriented(movement,new Translation2d(0.343, new Rotation2d(Math.PI/4) ));
 
     
     SmartDashboard.putNumber("input LX", translationX.getAsDouble() );  
