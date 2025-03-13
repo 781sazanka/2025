@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,6 +17,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,6 +34,10 @@ import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.LimelightResults;
 import frc.robot.LimelightHelpers.LimelightTarget_Fiducial;
 import frc.robot.LimelightHelpers.RawFiducial;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.config.PIDConstants;
 
 import java.util.Arrays;
 
@@ -61,6 +67,37 @@ public class SwerveSubsystem extends SubsystemBase
         //swervedrive.setChassisSpeeds(new ChassisSpeeds(0,0,0));
 
         //swervedrive.setAngularVelocityCompensation(true,true,0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
+
+    RobotConfig config;
+
+    try{
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // Handle exception as needed
+      e.printStackTrace();
+    }
+
+    // Configure AutoBuilder last
+    AutoBuilder.configure(
+            this::getpose, // Robot pose supplier
+            this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getSpeed, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            (speeds, feedforwards) -> drive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+            new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+            ),
+            config, // The robot configuration
+            () -> {
+
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this // Reference to this subsystem to set requirements
+    );
     }
 
     @Override
@@ -88,6 +125,16 @@ public class SwerveSubsystem extends SubsystemBase
     {
     }
 
+    public Pose2d getpose(){
+      return swervedrive.getPose();
+    }
+    public void resetPose(Pose2d pose){
+      swervedrive.resetOdometry(pose);
+    }
+    public ChassisSpeeds getSpeed(){
+      return swervedrive.getRobotVelocity();
+    }
+
     public Command getAutonomousCommand(String pathName)
     {
     // Create a path following command using AutoBuilder. This will also trigger event markers.
@@ -96,6 +143,10 @@ public class SwerveSubsystem extends SubsystemBase
 
     public Command Stop(){
       return run(() -> swervedrive.lockPose());
+    }
+
+    public void drive(ChassisSpeeds speeds){
+      swervedrive.drive(speeds);
     }
 
     public Command drivetotarget (){
@@ -115,11 +166,10 @@ public class SwerveSubsystem extends SubsystemBase
         SmartDashboard.putNumber("drivetotarget/rotation", rotation );  
         SmartDashboard.putNumber("drivetotarget/VX", movement.vxMetersPerSecond );  
         SmartDashboard.putNumber("drivetotarget/VY", movement.vyMetersPerSecond);  
-        SmartDashboard.putNumber("drivetotarget/angular velocity", movement.omegaRadiansPerSecond);   
-                                    
-
-
-
+        SmartDashboard.putNumber("drivetotarget/angular velocity", movement.omegaRadiansPerSecond); 
+        
+        drive(movement);
+                                  
       });
 
     }
@@ -143,9 +193,7 @@ public class SwerveSubsystem extends SubsystemBase
                                                                           swervedrive.getOdometryHeading().getRadians(),
                                                                           swervedrive.getMaximumChassisVelocity());
 
-    //swervedrive.drive(movement,false,new Translation2d(0.343, new Rotation2d(Math.PI/4) ));
-
-    swervedrive.driveFieldOriented(movement,new Translation2d(0.343, new Rotation2d(Math.PI/4) ));
+    drive(movement);
 
     
     SmartDashboard.putNumber("input LX", translationX.getAsDouble() );  

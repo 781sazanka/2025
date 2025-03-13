@@ -5,8 +5,13 @@
 package frc.robot;
 
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -25,12 +30,17 @@ public class RobotContainer
 
   final         CommandGenericHID driverXbox = new CommandGenericHID(3);
   private final SwerveSubsystem drivebase  = new SwerveSubsystem();
+  private final SendableChooser<Command> autoChooser;
 
 
 
 
   public RobotContainer()
   {
+
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
   
     configureBindings();
@@ -41,7 +51,6 @@ public class RobotContainer
     Command reset = drivebase.resetpos();
     reset.addRequirements(drivebase);
     driverXbox.button(3).whileTrue(reset);
-
 
     Command Drivetotarget = drivebase.drivetotarget();
     Drivetotarget.addRequirements(drivebase);
@@ -72,7 +81,7 @@ public class RobotContainer
    */
   public Command getAutonomousCommand()
   {
-    return null;
+    return autoChooser.getSelected();
   }
 
   public void setMotorBrake(boolean brake)
