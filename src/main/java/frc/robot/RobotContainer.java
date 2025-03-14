@@ -6,6 +6,7 @@ package frc.robot;
 
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,6 +20,8 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
+
+import frc.robot.Commands.driveToTarget;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -52,9 +55,13 @@ public class RobotContainer
     reset.addRequirements(drivebase);
     driverXbox.button(3).whileTrue(reset);
 
-    Command Drivetotarget = drivebase.drivetotarget();
+    Command Drivetotarget = new driveToTarget(drivebase);
     Drivetotarget.addRequirements(drivebase);
-    driverXbox.button(4).whileTrue(Drivetotarget);
+    driverXbox.button(4).onTrue(Drivetotarget);
+
+    NamedCommands.registerCommand("Drive To Target", Drivetotarget);
+    NamedCommands.registerCommand("Reset", reset);
+    NamedCommands.registerCommand("stop", stop);
 
     
   }
@@ -69,7 +76,7 @@ public class RobotContainer
 
   public void configureBindings(){
     
-    Command swerve_Command = drivebase.driveCommand(() -> driverXbox.getRawAxis(0),() -> driverXbox.getRawAxis(1),() -> driverXbox.getRawAxis(2));    drivebase.setDefaultCommand(swerve_Command);
+    Command swerve_Command = drivebase.driveFromController(() -> driverXbox.getRawAxis(0),() -> driverXbox.getRawAxis(1),() -> driverXbox.getRawAxis(2));    drivebase.setDefaultCommand(swerve_Command);
 
   }
  

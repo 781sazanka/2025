@@ -44,4 +44,12 @@ public final class Constants
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
   }
+
+  public static final class AutoConstants
+  {
+
+    // Hold time on motor brakes when disabled
+    public static final double Rotation_stop_threshhold = 0.01; // radians
+    public static final double Distance_Threshold = 0.1; // meters
+  }
 }
