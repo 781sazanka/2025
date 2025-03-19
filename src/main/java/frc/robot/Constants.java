@@ -45,11 +45,31 @@ public final class Constants
     public static final double TURN_CONSTANT    = 6;
   }
 
+  public static class ElevatorCOnstants{
+    public static final double L1_height = 0.46;
+    public static final double L2_height = 0.81;
+    public static final double L3_height = 1.21;
+    public static final double L4_height = 1.83;
+
+    public static final double Pully_ratio = 0.5;
+    public static final double falcon_ratio = 3;
+
+    public static final double error_tol = 0.05;
+
+    public static final int sparkmax_id = 0;
+  }
+
   public static final class AutoConstants
   {
 
     // Hold time on motor brakes when disabled
     public static final double Rotation_stop_threshhold = 0.01; // radians
-    public static final double Distance_Threshold = 0.1; // meters
+    public static final double Distance_Threshold = 0.2; // meters
+  }
+
+  public static final class moveToSideConstants{
+    public static final double distance_left = 0.2;
+    public static final double distance_right = 0.3;
+    public static final double speed = 0.1;
   }
 }

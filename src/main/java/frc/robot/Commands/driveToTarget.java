@@ -2,6 +2,7 @@ package frc.robot.Commands;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,9 +17,12 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
+import edu.wpi.first.units.Units;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+
 
 
 
@@ -41,6 +45,7 @@ public class driveToTarget extends Command{
     public void initialize() {
         setvalues();
     }
+
   
     @Override
     public boolean isFinished() {
@@ -57,7 +62,9 @@ public class driveToTarget extends Command{
       
             setvalues();
     
-            ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(x, y,rotation,swervedrive.getOdometryHeading().getRadians(),swervedrive.getMaximumChassisVelocity());
+            ChassisSpeeds movement = new ChassisSpeeds(1*y, -1*x,1*rotation);
+
+
     
             SmartDashboard.putNumber("drivetotarget/x", x );  
             SmartDashboard.putNumber("drivetotarget/y", y); 
@@ -69,16 +76,32 @@ public class driveToTarget extends Command{
             swerveSubsystem.drive(movement);
                                         
           }
+
+    public double getspeed(double current_distance){
+        return Math.pow(Constants.AutoConstants.Distance_Threshold - distance, -3);
+    }
       
 
     public void setvalues(){
       double[] results = NetworkTableInstance.getDefault().getTable("limelight").getEntry("targetpose_cameraspace").getDoubleArray(new double[6]);
       Pose2d pose = LimelightHelpers.toPose2D(results);
+      Pose3d pose3d = LimelightHelpers.toPose3D(results);
 
-      rotation = pose.getRotation().getRadians();
-      x = pose.getMeasureX().in(Units.Meter);
-      y = pose.getY();
+      if ((0 == pose3d.getX())|(0 == pose3d.getZ())){
+
+      }else{
+
+        rotation = pose.getRotation().getRadians();
+        x = pose3d.getMeasureX().in(Units.Meter);
+        y = pose3d.getMeasureZ().in(Units.Meter);
+
+      }
 
       distance = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+
+      SmartDashboard.putNumber("Target/x", x );  
+      SmartDashboard.putNumber("Target/y", y); 
+      SmartDashboard.putNumber("Target/dist", distance); 
+      SmartDashboard.putNumber("Target/Rotation", rotation); 
     }
 }

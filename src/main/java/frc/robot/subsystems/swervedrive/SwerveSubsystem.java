@@ -72,7 +72,7 @@ public class SwerveSubsystem extends SubsystemBase
         swervedrive.setHeadingCorrection(true);
         //swervedrive.setChassisSpeeds(new ChassisSpeeds(0,0,0));
 
-        //swervedrive.setAngularVelocityCompensation(true,true,0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
+        swervedrive.setAngularVelocityCompensation(true,true,0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
     
 
     NamedCommands.registerCommand("STOP", this.Stop());
@@ -120,6 +120,7 @@ public class SwerveSubsystem extends SubsystemBase
       }
 
     */
+
   
     }
   
@@ -151,25 +152,52 @@ public class SwerveSubsystem extends SubsystemBase
     }
 
     public void drive(ChassisSpeeds speeds){
-      swervedrive.drive(speeds);
+      double speed = Math.sqrt(Math.pow(speeds.vxMetersPerSecond, 2) + Math.pow(speeds.vyMetersPerSecond, 2));
+      if (speed > Constants.MAX_SPEED){
+        ChassisSpeeds newspeed = speeds.times(Constants.MAX_SPEED/speed);
+        swervedrive.drive(newspeed);
+      }else{
+        swervedrive.drive(speeds);
+      }
+        
+    }
+
+    public void drive(ChassisSpeeds speeds,boolean atmax){
+
+      double speed = Math.sqrt(Math.pow(speeds.vxMetersPerSecond, 2) + Math.pow(speeds.vyMetersPerSecond, 2));
+      if ((atmax == true)|(speed > Constants.MAX_SPEED)){
+        ChassisSpeeds newspeed = speeds.times(Constants.MAX_SPEED/speed);
+        swervedrive.drive(newspeed);
+      } else{
+        swervedrive.drive(speeds);
+      }
+        
+    }
+
+    public void drive(ChassisSpeeds speeds,double speedMetersPerSecond){
+
+      double speed = Math.sqrt(Math.pow(speeds.vxMetersPerSecond, 2) + Math.pow(speeds.vyMetersPerSecond, 2));
+      ChassisSpeeds newspeed = speeds.times(Constants.MAX_SPEED/speed);
+      drive(newspeed);
+        
     }
 
 
     public Command resetpos(){
       SmartDashboard.putString("MODE", "resetting..." );
-      return run(() -> swervedrive.setChassisSpeeds(new ChassisSpeeds(0,0.1,0)));
+      return run(() -> swervedrive.setChassisSpeeds(new ChassisSpeeds(1,0,0)));
     }
 
     public Command driveFromController(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier heading)
     {
     return run(() -> {
 
-    Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationX.getAsDouble(),translationY.getAsDouble()), 0.8);
+    Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationY.getAsDouble(),translationX.getAsDouble()), 0.8);
 
     double rotation = heading.getAsDouble();
 
     // Make the robot move
-    ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(scaledInputs.getX(), scaledInputs.getY()*-1,rotation,swervedrive.getOdometryHeading().getRadians(),swervedrive.getMaximumChassisVelocity());
+    ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(scaledInputs.getX()*-1, scaledInputs.getY()*-1,-1*rotation,swervedrive.getOdometryHeading().getRadians(),swervedrive.getMaximumChassisVelocity());
 
     drive(movement);
 

@@ -22,6 +22,7 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 import frc.robot.Commands.driveToTarget;
+import frc.robot.Commands.moveToSide;;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -57,11 +58,21 @@ public class RobotContainer
 
     Command Drivetotarget = new driveToTarget(drivebase);
     Drivetotarget.addRequirements(drivebase);
-    driverXbox.button(4).onTrue(Drivetotarget);
+    driverXbox.button(4).whileTrue(Drivetotarget);
+
+    Command goLeft = new moveToSide(drivebase,false);
+    goLeft.addRequirements(drivebase);
+    driverXbox.button(5).onTrue(goLeft);
+
+    Command goRight = new moveToSide(drivebase,true);
+    goRight.addRequirements(drivebase);
+    driverXbox.button(6).onTrue(goRight);
 
     NamedCommands.registerCommand("Drive To Target", Drivetotarget);
     NamedCommands.registerCommand("Reset", reset);
     NamedCommands.registerCommand("stop", stop);
+    NamedCommands.registerCommand("goRight", goRight);
+    NamedCommands.registerCommand("goLeft", goLeft);
 
     
   }
@@ -88,7 +99,9 @@ public class RobotContainer
    */
   public Command getAutonomousCommand()
   {
-    return autoChooser.getSelected();
+    Command yay = autoChooser.getSelected();
+    yay.addRequirements(drivebase);
+    return yay;
   }
 
   public void setMotorBrake(boolean brake)
