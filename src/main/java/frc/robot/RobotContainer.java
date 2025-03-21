@@ -36,6 +36,8 @@ public class RobotContainer
   private final SwerveSubsystem drivebase  = new SwerveSubsystem();
   private final SendableChooser<Command> autoChooser;
 
+  private Command autCommand;
+
 
 
 
@@ -45,9 +47,10 @@ public class RobotContainer
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
-    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
-  
     configureBindings();
+
+
+
     Command stop = drivebase.Stop();
     stop.addRequirements(drivebase);
     driverXbox.button(2).whileTrue(stop);
@@ -74,6 +77,8 @@ public class RobotContainer
     NamedCommands.registerCommand("goRight", goRight);
     NamedCommands.registerCommand("goLeft", goLeft);
 
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+
     
   }
 
@@ -87,7 +92,8 @@ public class RobotContainer
 
   public void configureBindings(){
     
-    Command swerve_Command = drivebase.driveFromController(() -> driverXbox.getRawAxis(0),() -> driverXbox.getRawAxis(1),() -> driverXbox.getRawAxis(2));    drivebase.setDefaultCommand(swerve_Command);
+    Command swerve_Command = drivebase.driveFromController(() -> driverXbox.getRawAxis(0),() -> driverXbox.getRawAxis(1),() -> driverXbox.getRawAxis(2));
+    drivebase.setDefaultCommand(swerve_Command);
 
   }
  
@@ -99,9 +105,9 @@ public class RobotContainer
    */
   public Command getAutonomousCommand()
   {
-    Command yay = autoChooser.getSelected();
-    yay.addRequirements(drivebase);
-    return yay;
+    autCommand = autoChooser.getSelected();
+    autCommand.addRequirements(drivebase);
+    return autCommand;
   }
 
   public void setMotorBrake(boolean brake)

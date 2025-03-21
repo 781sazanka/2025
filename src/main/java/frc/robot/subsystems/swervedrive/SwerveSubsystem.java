@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.swervedrive;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.function.DoubleSupplier;
@@ -17,11 +19,13 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -29,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import swervelib.SwerveDrive;
 import swervelib.SwerveInputStream;
+import swervelib.imu.SwerveIMU;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
@@ -41,18 +46,32 @@ import frc.robot.LimelightHelpers.RawFiducial;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.units.Units;
 
 import java.util.Arrays;
 
+import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXComType;
+
+import swervelib.SwerveModule;
+
+import edu.wpi.first.wpilibj.AnalogGyro;
+
 
 public class SwerveSubsystem extends SubsystemBase
+
 {
 
     private SwerveDrive swervedrive;
+    private AHRS gyro;
+    private AnalogGyro gyro2;
+    private boolean endauto;
+
     public SwerveSubsystem(){
+        endauto = false;
 
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
 
@@ -69,13 +88,12 @@ public class SwerveSubsystem extends SubsystemBase
 
         swervedrive.resetOdometry(new Pose2d());
         swervedrive.resetDriveEncoders();
-        swervedrive.setHeadingCorrection(true);
+        swervedrive.setHeadingCorrection(false);
         //swervedrive.setChassisSpeeds(new ChassisSpeeds(0,0,0));
 
         swervedrive.setAngularVelocityCompensation(true,true,0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
     
 
-    NamedCommands.registerCommand("STOP", this.Stop());
     RobotConfig config = null;
     
     try{
@@ -92,10 +110,10 @@ public class SwerveSubsystem extends SubsystemBase
             this::getpose, // Robot pose supplier
             this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
             this::getSpeed, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, feedforwards) -> drive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            (speeds, feedforwards) -> drive_ignoreconstraints(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-            new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+            new PIDConstants(0.01, 0.0, 0.0), // Translation PID constants
+            new PIDConstants(0.01, 0.0, 0.0) // Rotation PID constants
             ),
             config, // The robot configuration
             () -> DriverStation.getAlliance().map(a -> a == DriverStation.Alliance.Red).orElse(false),
@@ -121,7 +139,13 @@ public class SwerveSubsystem extends SubsystemBase
 
     */
 
-  
+    swervedrive.updateOdometry();
+
+    
+    }
+
+    public boolean hasended(){
+      return endauto == true;
     }
   
     @Override
@@ -132,6 +156,7 @@ public class SwerveSubsystem extends SubsystemBase
     public Pose2d getpose(){
       return swervedrive.getPose();
     }
+
     public void resetPose(Pose2d pose){
       swervedrive.resetOdometry(pose);
     }
@@ -143,23 +168,32 @@ public class SwerveSubsystem extends SubsystemBase
     {
     // Create a path following command using AutoBuilder. This will also trigger event markers.
     SmartDashboard.putString("MODE", "Getting Auto" );
-    return new PathPlannerAuto(pathName);
+    return (new PathPlannerAuto(pathName));
     }
 
     public Command Stop(){
+      endauto=false;
       SmartDashboard.putString("MODE", "Stopped" );
-      return run(() -> swervedrive.lockPose());
+      return run(() -> {swervedrive.lockPose();});
     }
 
     public void drive(ChassisSpeeds speeds){
       double speed = Math.sqrt(Math.pow(speeds.vxMetersPerSecond, 2) + Math.pow(speeds.vyMetersPerSecond, 2));
       if (speed > Constants.MAX_SPEED){
         ChassisSpeeds newspeed = speeds.times(Constants.MAX_SPEED/speed);
-        swervedrive.drive(newspeed);
+        swervedrive.drive(newspeed,false,new Translation2d());
       }else{
-        swervedrive.drive(speeds);
+        swervedrive.drive(speeds,false,new Translation2d());
       }
         
+    }
+
+    public void drive_ignoreconstraints(ChassisSpeeds speeds){
+      swervedrive.drive(speeds,false,new Translation2d());
+    }
+
+    public void drive_ignoreconstraints_feildoriented(ChassisSpeeds speeds){
+      swervedrive.driveFieldOriented(speeds);
     }
 
     public void drive(ChassisSpeeds speeds,boolean atmax){
@@ -167,9 +201,9 @@ public class SwerveSubsystem extends SubsystemBase
       double speed = Math.sqrt(Math.pow(speeds.vxMetersPerSecond, 2) + Math.pow(speeds.vyMetersPerSecond, 2));
       if ((atmax == true)|(speed > Constants.MAX_SPEED)){
         ChassisSpeeds newspeed = speeds.times(Constants.MAX_SPEED/speed);
-        swervedrive.drive(newspeed);
+        swervedrive.drive(newspeed,false,new Translation2d());
       } else{
-        swervedrive.drive(speeds);
+        swervedrive.drive(speeds,false,new Translation2d());
       }
         
     }
@@ -185,21 +219,35 @@ public class SwerveSubsystem extends SubsystemBase
 
     public Command resetpos(){
       SmartDashboard.putString("MODE", "resetting..." );
-      return run(() -> swervedrive.setChassisSpeeds(new ChassisSpeeds(1,0,0)));
+      return run(() -> swervedrive.setChassisSpeeds(new ChassisSpeeds(0,1,0)));
     }
 
     public Command driveFromController(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier heading)
     {
     return run(() -> {
 
-    Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationY.getAsDouble(),translationX.getAsDouble()), 0.8);
+    double x_input = translationX.getAsDouble();
+    double y_input = translationY.getAsDouble();
+
+    /* 
+    if(Math.abs(translationX.getAsDouble()) < Constants.OperatorConstants.DEADBAND){
+      x_input = 0.0;
+    }
+
+    if(Math.abs(translationY.getAsDouble()) < Constants.OperatorConstants.DEADBAND){
+      y_input = 0.0;
+    }
+
+    */
+
+    Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(y_input,x_input), 0.9);
 
     double rotation = heading.getAsDouble();
 
     // Make the robot move
-    ChassisSpeeds movement = swervedrive.swerveController.getTargetSpeeds(scaledInputs.getX()*-1, scaledInputs.getY()*-1,-1*rotation,swervedrive.getOdometryHeading().getRadians(),swervedrive.getMaximumChassisVelocity());
-
-    drive(movement);
+    ChassisSpeeds movement = new ChassisSpeeds(scaledInputs.getX()*-1, scaledInputs.getY()*-1,-1*rotation);
+    drive_ignoreconstraints(movement);
+    //>dedrive_ignoreconstraints_feildoriented(movement);
 
     
     SmartDashboard.putNumber("input LX", translationX.getAsDouble() );  

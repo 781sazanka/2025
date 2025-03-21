@@ -6,22 +6,31 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 
-public class ExampleSubsystem extends SubsystemBase {
+import frc.robot.Commands.moveEndEffector;
+
+public class endEffector extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
 
+  private TalonFX talon;
+  private boolean isrunning;
 
 
-  public ExampleSubsystem() {
-    
+
+  public endEffector() {
+    talon = new TalonFX(Constants.endEffectorConstants.talonID);
   }
 
 
-  public Command exampleMethodCommand() {
+  public Command intake() {
+    return new moveEndEffector(talon,-1);
+  }
 
-    return runOnce(
+  public Command shoot() {
+    return run(
         () -> {
         });
   }

@@ -4,21 +4,41 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.proto.ElevatorFeedforwardProto;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.math.controller.PIDController;
 
 import frc.robot.Constants.ElevatorCOnstants;
+import com.ctre.phoenix6.controls.Follower;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 
 public class Elevator extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  TalonFX talon;
+  TalonFX talon_1;
+  TalonFX talon_2;
+  PIDController pid_controller_1;
+  PIDController pid_controller_2;
+
+  
+
   public Elevator() {
-    talon = new TalonFX(ElevatorCOnstants.sparkmax_id);
+    talon_1 = new TalonFX(ElevatorCOnstants.Talon1_ID);
+    
+    talon_2 = new TalonFX(ElevatorCOnstants.Talon2_ID);
+
+    pid_controller_1 = new PIDController(0.5,0,0);
+    pid_controller_2 = new PIDController(0.5,0,0);
   }
 
-  public void setvoltage(double volts) {
-    talon.setVoltage(volts);
+  public void setMovement(double volts) {
+    talon_1.set(volts);
+
+    talon_1.get();
+    talon_2.set(volts);
   }
 
   public boolean isatHeight(double target_height){ 

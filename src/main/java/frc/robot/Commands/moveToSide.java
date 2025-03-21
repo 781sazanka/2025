@@ -56,7 +56,7 @@ public class moveToSide extends Command{
           dist = moveToSideConstants.distance_right;
           mult = 1;
         }else{
-          dist = moveToSideConstants.distance_left;;
+          dist = moveToSideConstants.distance_left;
           mult = -1;
         }
 
@@ -67,7 +67,7 @@ public class moveToSide extends Command{
     }
     @Override
     public void initialize(){
-      timer.start();
+      timer.restart();
     }
 
     @Override

@@ -6,7 +6,9 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Unit;
 import swervelib.math.Matter;
+import edu.wpi.first.units.Units.*;;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean constants. This
@@ -21,10 +23,11 @@ public final class Constants
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; 
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
-  public static final double LOOP_TIME  = 0.20; //s, 20ms + 110ms sprk max velocity lag
+  public static final double LOOP_TIME  = 0.02; //s, 20ms + 110ms sprk max velocity lag
   //public static final double MAX_SPEED  = Units.feetToMeters(14.5);
 
-  public static final double MAX_SPEED  = Units.feetToMeters(1);
+
+  public static final double MAX_SPEED  = 1;
   // Maximum speed of the robot in meters per second, used to limit acceleration.
 
 
@@ -37,8 +40,6 @@ public final class Constants
 
   public static class OperatorConstants
   {
-
-    // Joystick Deadband
     public static final double DEADBAND        = 0.1;
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
@@ -56,20 +57,30 @@ public final class Constants
 
     public static final double error_tol = 0.05;
 
-    public static final int sparkmax_id = 0;
+    public static final int Talon1_ID = 11;
+    public static final int Talon2_ID = 12;
   }
 
   public static final class AutoConstants
   {
-
-    // Hold time on motor brakes when disabled
     public static final double Rotation_stop_threshhold = 0.01; // radians
-    public static final double Distance_Threshold = 0.2; // meters
+    public static final double Distance_Threshold = 0.01; // meters
+    public static final double x_threshold = 0.05; // meters
+    public static final double rotation_offset = 0.2; // meters
+    public static final double target_distance = 0.2;
+    public static final double time_threshold = 1;
+
+
   }
 
   public static final class moveToSideConstants{
     public static final double distance_left = 0.2;
     public static final double distance_right = 0.3;
-    public static final double speed = 0.1;
+    public static final double speed = 1;
+  }
+
+  public static final class endEffectorConstants{
+    public static final int talonID = 3;
+    public static final double spikeThreshold = 0.5;
   }
 }
