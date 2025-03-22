@@ -78,7 +78,7 @@ public class moveToSide extends Command{
 
     @Override
     public void execute() {
-      ChassisSpeeds movement = new ChassisSpeeds(0,speed*mult ,0);
+      ChassisSpeeds movement = new ChassisSpeeds(speed*mult,0 ,0);
       swervedrive.drive(movement);                                  
       }
 

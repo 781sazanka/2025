@@ -22,7 +22,11 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 import frc.robot.Commands.driveToTarget;
-import frc.robot.Commands.moveToSide;;
+import frc.robot.Commands.moveToSide;
+
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.arm;
+import frc.robot.subsystems.endEffector;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -33,7 +37,11 @@ public class RobotContainer
 {
 
   final         CommandGenericHID driverXbox = new CommandGenericHID(3);
+  final         CommandGenericHID driverXbox_2 = new CommandGenericHID(1);
   private final SwerveSubsystem drivebase  = new SwerveSubsystem();
+  //private final Elevator elevatorSubsystem = new Elevator();
+  //private final arm arm = new arm();
+  //private final endEffector endEffector = new endEffector();
   private final SendableChooser<Command> autoChooser;
 
   private Command autCommand;
@@ -48,8 +56,6 @@ public class RobotContainer
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
     configureBindings();
-
-
 
     Command stop = drivebase.Stop();
     stop.addRequirements(drivebase);
@@ -70,6 +76,36 @@ public class RobotContainer
     Command goRight = new moveToSide(drivebase,true);
     goRight.addRequirements(drivebase);
     driverXbox.button(6).onTrue(goRight);
+
+    /* 
+
+    Command moveelevator = elevatorSubsystem.setSpeed(() -> (driverXbox_2.getRawAxis(1)));
+    moveelevator.addRequirements(elevatorSubsystem);
+    driverXbox_2.axisGreaterThan(1, 0.1).onTrue(moveelevator);
+
+    Command goup = elevatorSubsystem.moveup(); 
+    goup.addRequirements(elevatorSubsystem);
+    driverXbox_2.button(1).onTrue(goup);
+
+    Command godown = elevatorSubsystem.moveup(); 
+    godown.addRequirements(elevatorSubsystem);
+    driverXbox_2.button(2).onTrue(godown);
+
+    Command stopelevator = elevatorSubsystem.stopelevator(); 
+    stopelevator.addRequirements(elevatorSubsystem);
+    driverXbox_2.button(3).onTrue(stopelevator);
+
+    Command resetElevator = elevatorSubsystem.resetHeight(); 
+    resetElevator.addRequirements(elevatorSubsystem);
+    driverXbox_2.button(4).onTrue(resetElevator);
+
+    
+    Command intake = endEffector.intake(); 
+    resetElevator.addRequirements(endEffector);
+    driverXbox_2.button(5).onTrue(intake);
+
+    */
+
 
     NamedCommands.registerCommand("Drive To Target", Drivetotarget);
     NamedCommands.registerCommand("Reset", reset);

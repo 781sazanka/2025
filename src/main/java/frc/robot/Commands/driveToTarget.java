@@ -65,10 +65,9 @@ public class driveToTarget extends Command{
       setvalues();
       timer = new Timer();
       started = false;
-      pid_x = new PIDController(0.5, 0, 0);
-      pid_y = new PIDController(0.5, 0, 0);
-      pid_rot = new PIDController(0.5, 0, 0);
-      pid_rot.enableContinuousInput(0, Math.PI*2);
+      pid_x = new PIDController(0.5, 0, 0.1);
+      pid_y = new PIDController(0.5, 0, 0.1);
+      pid_rot = new PIDController(0.5, 0, 0.1);
 
       pid_x.setSetpoint(0);
       pid_x.setTolerance(AutoConstants.x_threshold);
@@ -79,6 +78,7 @@ public class driveToTarget extends Command{
       pid_rot.setSetpoint(AutoConstants.rotation_offset);
       pid_rot.setTolerance(AutoConstants.Rotation_stop_threshhold);
     }
+
 
     public double getx(){
       return x;
@@ -109,6 +109,7 @@ public class driveToTarget extends Command{
           return false;
         }
 
+
     }
 
     @Override
@@ -116,16 +117,18 @@ public class driveToTarget extends Command{
             SmartDashboard.putString("MODE", "Driving to target" );  
       
             setvalues();
+            rotation = rotation * 100;
 
-            rotation = -1 * rotation;
+            x = x * -1;
+            y = y * 1;
 
 
-            double x_move = pid_x.calculate(x,0);
-            double y_move = pid_y.calculate(y,AutoConstants.target_distance);
-            double rot_move = pid_rot.calculate(rotation,0);
+            double x_move = pid_x.calculate(x);
+            double y_move = pid_y.calculate(y);
+            double rot_move = pid_rot.calculate(rotation);
 
     
-            ChassisSpeeds movement = new ChassisSpeeds(y_move, -1*x_move,rot_move);
+            ChassisSpeeds movement = new ChassisSpeeds(30*x_move,-30*y_move,30*rot_move);
 
 
     
@@ -135,6 +138,7 @@ public class driveToTarget extends Command{
             SmartDashboard.putNumber("drivetotarget/VX", movement.vxMetersPerSecond );  
             SmartDashboard.putNumber("drivetotarget/VY", movement.vyMetersPerSecond);  
             SmartDashboard.putNumber("drivetotarget/angular velocity", movement.omegaRadiansPerSecond); 
+            SmartDashboard.putBoolean("drivetotarget/is at target", isattarget()); 
 
             swerveSubsystem.drive(movement);
 
@@ -143,7 +147,7 @@ public class driveToTarget extends Command{
               timer.restart();
               started = true;
             }
-            
+
             if(isattarget() == false){
               started = false;
               timer.stop();
@@ -153,7 +157,7 @@ public class driveToTarget extends Command{
           }
 
     public double getspeed(double current_distance){
-        return Math.pow(Constants.AutoConstants.target_distance - distance, 5);
+        return Math.pow(Constants.AutoConstants.target_distance - y, 2);
     }
       
 

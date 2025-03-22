@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.subsystems.Elevator;
 
+import edu.wpi.first.math.controller.PIDController;
+
 
 
 
@@ -28,29 +30,29 @@ public class setHeight extends Command{
   Elevator elevator;
   double target;
 
+  PIDController pid;
 
   public setHeight(Elevator e,double target_height){
     elevator = e;
     target = target_height;
+    pid.setSetpoint(target_height);
+    pid.setTolerance(Constants.ElevatorCOnstants.error_tol);
   }
 
   @Override
   public void initialize() {
+    pid = new PIDController(0.5, 0, 0);
   }
 
   @Override
   public boolean isFinished() {
-    return elevator.isatHeight(target);
+    return pid.atSetpoint();
   }
 
   @Override
   public void execute() {
-    
-
+    elevator.setMovement(pid.calculate(elevator.getCurrentHeight()));
   }
     
 
-  public void setvalues(){
-
-  }
 }

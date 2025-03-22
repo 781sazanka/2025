@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+import java.util.function.DoubleSupplier;
+
 import org.dyn4j.geometry.Rotation;
 
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -21,31 +23,35 @@ import edu.wpi.first.wpilibj.Encoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase;
 
-import frc.robot.Commands.moveEndEffector;
-
-public class endEffector extends SubsystemBase {
+public class arm extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
 
   private SparkMax sparkmax;
+
   private RelativeEncoder encoder;
 
 
-  public endEffector() {
-    sparkmax = new SparkMax(Constants.endEffectorConstants.talonID,MotorType.kBrushless);
+  public arm() {
+    sparkmax = new SparkMax(Constants.armCOnstants.sparkmaxID,MotorType.kBrushless);
     encoder = sparkmax.getEncoder();
   }
 
-
-  public Command intake() {
-    return new moveEndEffector(sparkmax, 1);
+  public void setZero(){
+    rotatetoangle(0);
   }
 
-  public Command shoot() {
-    return new moveEndEffector(sparkmax, -1);
+
+  public void rotatetoangle(double angle){
+    encoder.setPosition(angle);
+
   }
 
-  public Command stop() {
-    return new moveEndEffector(sparkmax, 0);
+  public Command setToAngle(DoubleSupplier input){
+    return run(() -> {rotatetoangle(input.getAsDouble());});
+  }
+
+  public Command setToAngle(Double input){
+    return run(() -> {rotatetoangle(input);});
   }
 
   @Override

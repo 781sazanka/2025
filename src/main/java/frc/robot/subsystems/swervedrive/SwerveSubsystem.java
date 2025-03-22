@@ -5,6 +5,7 @@
 package frc.robot.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Rotation;
 
 import java.io.File;
 import java.io.IOException;
@@ -228,8 +229,8 @@ public class SwerveSubsystem extends SubsystemBase
 
     double x_input = translationX.getAsDouble();
     double y_input = translationY.getAsDouble();
+    double rotation = heading.getAsDouble();
 
-    /* 
     if(Math.abs(translationX.getAsDouble()) < Constants.OperatorConstants.DEADBAND){
       x_input = 0.0;
     }
@@ -238,14 +239,16 @@ public class SwerveSubsystem extends SubsystemBase
       y_input = 0.0;
     }
 
-    */
+    if(Math.abs(heading.getAsDouble()) < Constants.OperatorConstants.DEADBAND){
+      rotation = 0.0;
+    }
 
-    Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(y_input,x_input), 0.9);
 
-    double rotation = heading.getAsDouble();
+    Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(x_input,y_input), 0.9);
+
 
     // Make the robot move
-    ChassisSpeeds movement = new ChassisSpeeds(scaledInputs.getX()*-1, scaledInputs.getY()*-1,-1*rotation);
+    ChassisSpeeds movement = new ChassisSpeeds(scaledInputs.getX()*Constants.MAX_SPEED, scaledInputs.getY()*-1*Constants.MAX_SPEED,rotation*Constants.MAX_SPEED);
     drive_ignoreconstraints(movement);
     //>dedrive_ignoreconstraints_feildoriented(movement);
 

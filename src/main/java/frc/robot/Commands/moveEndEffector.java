@@ -1,6 +1,8 @@
 package frc.robot.Commands;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -22,26 +24,27 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Elevator;
 
 
+
+
 public class moveEndEffector extends Command{
 
-  private TalonFX talon;
+  private SparkMax sparkmax;
   private double speed;
 
-
-  public moveEndEffector(TalonFX inputTalon,double inputSpeed){
-    talon = inputTalon;
+  public moveEndEffector(SparkMax inputTalon,double inputSpeed){
+    sparkmax = inputTalon;
     speed = inputSpeed;
   }
 
   @Override
   public void initialize() {
-    talon.set(0);
+    sparkmax.set(0);
   }
 
   @Override
   public boolean isFinished() {
-    if (Math.abs((talon.get()-speed)) > Constants.endEffectorConstants.spikeThreshold){
-      talon.set(0);
+    if (Math.abs((sparkmax.get()-speed)) > Constants.endEffectorConstants.spikeThreshold){
+      sparkmax.set(0);
       return true;
     }else{
       return false;
@@ -51,6 +54,12 @@ public class moveEndEffector extends Command{
 
   @Override
   public void execute() {
-    talon.set(speed);
+    sparkmax.set(speed);
   }
+
+  public void insert(){
+
+  }
+
+  
 }

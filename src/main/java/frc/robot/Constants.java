@@ -27,7 +27,7 @@ public final class Constants
   //public static final double MAX_SPEED  = Units.feetToMeters(14.5);
 
 
-  public static final double MAX_SPEED  = 1;
+  public static final double MAX_SPEED  = 10;
   // Maximum speed of the robot in meters per second, used to limit acceleration.
 
 
@@ -52,23 +52,26 @@ public final class Constants
     public static final double L3_height = 1.21;
     public static final double L4_height = 1.83;
 
+    public static final double Alge_1 = 0.6;
+    public static final double Alge_2 = 1.5;
+
     public static final double Pully_ratio = 0.5;
     public static final double falcon_ratio = 3;
 
     public static final double error_tol = 0.05;
 
-    public static final int Talon1_ID = 11;
-    public static final int Talon2_ID = 12;
+    public static final int Talon1_ID = 30;
+    public static final int Talon2_ID = 32;
   }
 
   public static final class AutoConstants
   {
-    public static final double Rotation_stop_threshhold = 0.01; // radians
-    public static final double Distance_Threshold = 0.01; // meters
+    public static final double Rotation_stop_threshhold = 0.05; // radians
+    public static final double Distance_Threshold = 0.05; // meters
     public static final double x_threshold = 0.05; // meters
-    public static final double rotation_offset = 0.2; // meters
+    public static final double rotation_offset = 0; // meters
     public static final double target_distance = 0.2;
-    public static final double time_threshold = 1;
+    public static final double time_threshold = 0.1;
 
 
   }
@@ -83,4 +86,14 @@ public final class Constants
     public static final int talonID = 3;
     public static final double spikeThreshold = 0.5;
   }
+
+  public static final class armCOnstants{
+    public static final int sparkmaxID = 10;
+    public static final int L1_angle = 180;
+    public static final int L2_angle = 45;
+    public static final int L3_angle = 45;
+    public static final int L4_angle = 0;
+    
+  }
+
 }
