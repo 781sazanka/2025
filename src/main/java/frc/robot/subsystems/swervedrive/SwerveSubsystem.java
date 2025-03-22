@@ -70,9 +70,11 @@ public class SwerveSubsystem extends SubsystemBase
     private AHRS gyro;
     private AnalogGyro gyro2;
     private boolean endauto;
+    private boolean bot_oriented;
 
     public SwerveSubsystem(){
         endauto = false;
+        bot_oriented = true;
 
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
 
@@ -223,6 +225,10 @@ public class SwerveSubsystem extends SubsystemBase
       return run(() -> swervedrive.setChassisSpeeds(new ChassisSpeeds(0,1,0)));
     }
 
+    public Command switchFeildOriented(){
+      return runOnce(() -> {bot_oriented =  !bot_oriented;});
+    }
+
     public Command driveFromController(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier heading)
     {
     return run(() -> {
@@ -249,8 +255,12 @@ public class SwerveSubsystem extends SubsystemBase
 
     // Make the robot move
     ChassisSpeeds movement = new ChassisSpeeds(scaledInputs.getX()*Constants.MAX_SPEED, scaledInputs.getY()*-1*Constants.MAX_SPEED,rotation*Constants.MAX_SPEED);
-    drive_ignoreconstraints(movement);
-    //>dedrive_ignoreconstraints_feildoriented(movement);
+    if (bot_oriented == true){
+      drive_ignoreconstraints(movement);
+    }else{
+      drive_ignoreconstraints_feildoriented(movement);
+    }
+  
 
     
     SmartDashboard.putNumber("input LX", translationX.getAsDouble() );  

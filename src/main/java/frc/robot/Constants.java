@@ -77,7 +77,7 @@ public final class Constants
   }
 
   public static final class moveToSideConstants{
-    public static final double distance_left = 0.2;
+    public static final double distance_left = 0.5;
     public static final double distance_right = 0.3;
     public static final double speed = 1;
   }

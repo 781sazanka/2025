@@ -37,7 +37,7 @@ public class RobotContainer
 {
 
   final         CommandGenericHID driverXbox = new CommandGenericHID(3);
-  final         CommandGenericHID driverXbox_2 = new CommandGenericHID(1);
+  //final         CommandGenericHID driverXbox_2 = new CommandGenericHID(1);
   private final SwerveSubsystem drivebase  = new SwerveSubsystem();
   //private final Elevator elevatorSubsystem = new Elevator();
   //private final arm arm = new arm();
@@ -64,10 +64,13 @@ public class RobotContainer
     Command reset = drivebase.resetpos();
     reset.addRequirements(drivebase);
     driverXbox.button(3).whileTrue(reset);
+    /* 
 
     Command Drivetotarget = new driveToTarget(drivebase);
     Drivetotarget.addRequirements(drivebase);
     driverXbox.button(4).whileTrue(Drivetotarget);
+
+    */
 
     Command goLeft = new moveToSide(drivebase,false);
     goLeft.addRequirements(drivebase);
@@ -76,6 +79,11 @@ public class RobotContainer
     Command goRight = new moveToSide(drivebase,true);
     goRight.addRequirements(drivebase);
     driverXbox.button(6).onTrue(goRight);
+
+
+
+    Command switchOrientation = drivebase.switchFeildOriented();
+    driverXbox.button(1).onTrue(switchOrientation);
 
     /* 
 
@@ -104,7 +112,7 @@ public class RobotContainer
     resetElevator.addRequirements(endEffector);
     driverXbox_2.button(5).onTrue(intake);
 
-    */
+    
 
 
     NamedCommands.registerCommand("Drive To Target", Drivetotarget);
@@ -113,7 +121,10 @@ public class RobotContainer
     NamedCommands.registerCommand("goRight", goRight);
     NamedCommands.registerCommand("goLeft", goLeft);
 
+    */
+
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+
 
     
   }
