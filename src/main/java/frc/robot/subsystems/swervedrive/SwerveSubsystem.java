@@ -237,6 +237,7 @@ public class SwerveSubsystem extends SubsystemBase
     double y_input = translationY.getAsDouble();
     double rotation = heading.getAsDouble();
 
+
     if(Math.abs(translationX.getAsDouble()) < Constants.OperatorConstants.DEADBAND){
       x_input = 0.0;
     }
