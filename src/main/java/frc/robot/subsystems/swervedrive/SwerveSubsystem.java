@@ -226,7 +226,7 @@ public class SwerveSubsystem extends SubsystemBase
     }
 
     public Command switchFeildOriented(){
-      return runOnce(() -> {bot_oriented =  !bot_oriented;});
+      return runOnce(() -> {bot_oriented =  !bot_oriented;swervedrive.resetOdometry(new Pose2d());});
     }
 
     public Command driveFromController(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier heading)
