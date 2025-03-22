@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.Rotation;
 
 import java.io.File;
 import java.io.IOException;
+import java.rmi.dgc.DGC;
 import java.util.function.DoubleSupplier;
 
 import org.json.simple.parser.ParseException;
@@ -40,6 +41,7 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import frc.robot.LimelightHelpers;
+import frc.robot.Commands.driveToTarget;
 import frc.robot.LimelightHelpers.LimelightResults;
 import frc.robot.LimelightHelpers.LimelightTarget_Fiducial;
 import frc.robot.LimelightHelpers.RawFiducial;
@@ -61,6 +63,8 @@ import swervelib.SwerveModule;
 
 import edu.wpi.first.wpilibj.AnalogGyro;
 
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+
 
 public class SwerveSubsystem extends SubsystemBase
 
@@ -71,10 +75,20 @@ public class SwerveSubsystem extends SubsystemBase
     private AnalogGyro gyro2;
     private boolean endauto;
     private boolean bot_oriented;
+    private ChassisSpeeds movement;
+
+    private int multx;
 
     public SwerveSubsystem(){
         endauto = false;
-        bot_oriented = true;
+        bot_oriented = true;       
+        
+        if (isRed()){
+          multx = 1;
+        } else{
+          multx = -1;
+        }
+        
 
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
 
@@ -119,9 +133,14 @@ public class SwerveSubsystem extends SubsystemBase
             new PIDConstants(0.01, 0.0, 0.0) // Rotation PID constants
             ),
             config, // The robot configuration
-            () -> DriverStation.getAlliance().map(a -> a == DriverStation.Alliance.Red).orElse(false),
+            () -> isRed(),
             this // Reference to this subsystem to set requirements
     );
+    }
+
+    public Boolean isRed(){
+      Boolean lol = DriverStation.getAlliance().map(a -> a == DriverStation.Alliance.Red).orElse(false);
+      return lol;
     }
 
     @Override
@@ -141,6 +160,8 @@ public class SwerveSubsystem extends SubsystemBase
       }
 
     */
+
+
 
     swervedrive.updateOdometry();
 
@@ -238,6 +259,7 @@ public class SwerveSubsystem extends SubsystemBase
     double rotation = heading.getAsDouble();
 
 
+
     if(Math.abs(translationX.getAsDouble()) < Constants.OperatorConstants.DEADBAND){
       x_input = 0.0;
     }
@@ -255,7 +277,12 @@ public class SwerveSubsystem extends SubsystemBase
 
 
     // Make the robot move
-    ChassisSpeeds movement = new ChassisSpeeds(scaledInputs.getX()*Constants.MAX_SPEED, scaledInputs.getY()*-1*Constants.MAX_SPEED,rotation*Constants.MAX_SPEED);
+    if (!isRed() & !bot_oriented){
+      movement = new ChassisSpeeds(scaledInputs.getX()*Constants.MAX_SPEED, scaledInputs.getY()*-1*Constants.MAX_SPEED,rotation*Constants.MAX_SPEED);
+    }else{
+      movement = new ChassisSpeeds(scaledInputs.getX()*Constants.MAX_SPEED*-1, scaledInputs.getY()*1*Constants.MAX_SPEED,rotation*Constants.MAX_SPEED);
+    }
+    
     if (bot_oriented == true){
       drive_ignoreconstraints(movement);
     }else{
