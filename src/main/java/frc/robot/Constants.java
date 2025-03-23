@@ -28,7 +28,7 @@ public final class Constants
 
 
   public static final double MAX_SPEED  = 10;
-  public static final double Rotation_constant  = 100;
+  public static final double Rotation_constant  = 1000;
   // Maximum speed of the robot in meters per second, used to limit acceleration.
 
 

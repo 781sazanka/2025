@@ -243,7 +243,7 @@ public class SwerveSubsystem extends SubsystemBase
 
     public Command resetpos(){
       SmartDashboard.putString("MODE", "resetting..." );
-      return run(() -> swervedrive.setChassisSpeeds(new ChassisSpeeds(1,0,0)));
+      return run(() -> swervedrive.setChassisSpeeds(new ChassisSpeeds(0,1,0)));
     }
 
     public Command switchFeildOriented(){
@@ -277,7 +277,7 @@ public class SwerveSubsystem extends SubsystemBase
 
 
 
-    movement = new ChassisSpeeds(scaledInputs.getY()*Constants.MAX_SPEED, scaledInputs.getX()*Constants.MAX_SPEED*-1,rotation*Constants.Rotation_constant);
+    movement = new ChassisSpeeds(scaledInputs.getX()*Constants.MAX_SPEED, scaledInputs.getY()*-1*Constants.MAX_SPEED,rotation*Constants.Rotation_constant);
 
     
     if (bot_oriented == true){
