@@ -276,12 +276,9 @@ public class SwerveSubsystem extends SubsystemBase
     Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(x_input,y_input), 0.9);
 
 
-    // Make the robot move
-    if (!isRed() & !bot_oriented){
-      movement = new ChassisSpeeds(scaledInputs.getX()*Constants.MAX_SPEED, scaledInputs.getY()*-1*Constants.MAX_SPEED,rotation*Constants.MAX_SPEED);
-    }else{
-      movement = new ChassisSpeeds(scaledInputs.getX()*Constants.MAX_SPEED*-1, scaledInputs.getY()*1*Constants.MAX_SPEED,rotation*Constants.MAX_SPEED);
-    }
+
+    movement = new ChassisSpeeds(scaledInputs.getX()*Constants.MAX_SPEED, scaledInputs.getY()*-1*Constants.MAX_SPEED,rotation*Constants.MAX_SPEED);
+
     
     if (bot_oriented == true){
       drive_ignoreconstraints(movement);
