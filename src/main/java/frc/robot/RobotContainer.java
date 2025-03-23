@@ -39,9 +39,9 @@ public class RobotContainer
   final         CommandGenericHID driverXbox = new CommandGenericHID(3);
   final         CommandGenericHID driverXbox_2 = new CommandGenericHID(1);
   private final SwerveSubsystem drivebase  = new SwerveSubsystem();
-  private final Elevator elevatorSubsystem = new Elevator();
-  private final arm arm = new arm();
-  private final endEffector endEffector = new endEffector();
+  //private final Elevator elevatorSubsystem = new Elevator();
+  //private final arm arm = new arm();
+  //private final endEffector endEffector = new endEffector();
   private final SendableChooser<Command> autoChooser;
 
   private Command autCommand;
