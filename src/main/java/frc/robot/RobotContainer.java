@@ -23,7 +23,7 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 import frc.robot.Commands.driveToTarget;
 import frc.robot.Commands.moveToSide;
-
+import frc.robot.Commands.setHeight;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.arm;
 import frc.robot.subsystems.endEffector;
@@ -37,11 +37,11 @@ public class RobotContainer
 {
 
   final         CommandGenericHID driverXbox = new CommandGenericHID(3);
-  //final         CommandGenericHID driverXbox_2 = new CommandGenericHID(1);
+  final         CommandGenericHID driverXbox_2 = new CommandGenericHID(1);
   private final SwerveSubsystem drivebase  = new SwerveSubsystem();
-  //private final Elevator elevatorSubsystem = new Elevator();
-  //private final arm arm = new arm();
-  //private final endEffector endEffector = new endEffector();
+  private final Elevator elevatorSubsystem = new Elevator();
+  private final arm arm = new arm();
+  private final endEffector endEffector = new endEffector();
   private final SendableChooser<Command> autoChooser;
 
   private Command autCommand;
@@ -64,13 +64,11 @@ public class RobotContainer
     Command reset = drivebase.resetpos();
     reset.addRequirements(drivebase);
     driverXbox.button(3).whileTrue(reset);
-    /* 
 
     Command Drivetotarget = new driveToTarget(drivebase);
     Drivetotarget.addRequirements(drivebase);
     driverXbox.button(4).whileTrue(Drivetotarget);
 
-    */
 
     Command goLeft = new moveToSide(drivebase,false);
     goLeft.addRequirements(drivebase);
@@ -85,32 +83,29 @@ public class RobotContainer
     Command switchOrientation = drivebase.switchFeildOriented();
     driverXbox.button(1).onTrue(switchOrientation);
 
-    /* 
 
     Command moveelevator = elevatorSubsystem.setSpeed(() -> (driverXbox_2.getRawAxis(1)));
     moveelevator.addRequirements(elevatorSubsystem);
     driverXbox_2.axisGreaterThan(1, 0.1).onTrue(moveelevator);
 
-    Command goup = elevatorSubsystem.moveup(); 
-    goup.addRequirements(elevatorSubsystem);
-    driverXbox_2.button(1).onTrue(goup);
-
-    Command godown = elevatorSubsystem.moveup(); 
-    godown.addRequirements(elevatorSubsystem);
-    driverXbox_2.button(2).onTrue(godown);
-
-    Command stopelevator = elevatorSubsystem.stopelevator(); 
-    stopelevator.addRequirements(elevatorSubsystem);
-    driverXbox_2.button(3).onTrue(stopelevator);
-
-    Command resetElevator = elevatorSubsystem.resetHeight(); 
-    resetElevator.addRequirements(elevatorSubsystem);
-    driverXbox_2.button(4).onTrue(resetElevator);
+    Command movearm = arm.setToAngle((() -> (driverXbox_2.getRawAxis(3))),(() -> (driverXbox_2.getRawAxis(4))));
+    movearm.addRequirements(arm);
+    driverXbox_2.axisGreaterThan(4, 0.1).onTrue(movearm);
 
     
     Command intake = endEffector.intake(); 
-    resetElevator.addRequirements(endEffector);
-    driverXbox_2.button(5).onTrue(intake);
+    intake.addRequirements(endEffector);
+    driverXbox_2.button(7).onTrue(intake);
+
+    Command shoot = endEffector.shoot(); 
+    shoot.addRequirements(endEffector);
+    driverXbox_2.button(8).onTrue(intake);
+
+    configueLevel(arm,elevatorSubsystem,Constants.ElevatorCOnstants.L1_height,Constants.armCOnstants.L1_angle,1);
+    configueLevel(arm,elevatorSubsystem,Constants.ElevatorCOnstants.L2_height,Constants.armCOnstants.L2_angle,2);
+    configueLevel(arm,elevatorSubsystem,Constants.ElevatorCOnstants.L3_height,Constants.armCOnstants.L3_angle,3);
+    configueLevel(arm,elevatorSubsystem,Constants.ElevatorCOnstants.L4_height,Constants.armCOnstants.L4_angle,4);
+    
 
     
 
@@ -121,7 +116,8 @@ public class RobotContainer
     NamedCommands.registerCommand("goRight", goRight);
     NamedCommands.registerCommand("goLeft", goLeft);
 
-    */
+
+
 
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
 
@@ -142,6 +138,16 @@ public class RobotContainer
     Command swerve_Command = drivebase.driveFromController(() -> driverXbox.getRawAxis(0),() -> driverXbox.getRawAxis(1),() -> driverXbox.getRawAxis(2));
     drivebase.setDefaultCommand(swerve_Command);
 
+  }
+
+  public void configueLevel(arm a, Elevator e, double h, double ang,int buttonNo){
+    setHeight setHeight = new setHeight(e,h);
+    setHeight.addRequirements(e);
+    driverXbox_2.button(buttonNo).onTrue(setHeight);
+
+    Command setAngle = a.setToAngle(ang); 
+    setAngle.addRequirements(a);
+    driverXbox_2.button(buttonNo).onTrue(setAngle);
   }
  
 

@@ -89,10 +89,12 @@ public final class Constants
 
   public static final class armCOnstants{
     public static final int sparkmaxID = 10;
-    public static final int L1_angle = 180;
-    public static final int L2_angle = 45;
-    public static final int L3_angle = 45;
-    public static final int L4_angle = 0;
+    public static final double L1_angle = 180;
+    public static final double L2_angle = 45;
+    public static final double L3_angle = 45;
+    public static final double L4_angle = 0;
+
+    public static final double gearRatio = 160;
     
   }
 

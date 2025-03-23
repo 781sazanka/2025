@@ -20,8 +20,11 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase;
+
 
 public class arm extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
@@ -30,10 +33,14 @@ public class arm extends SubsystemBase {
 
   private RelativeEncoder encoder;
 
+  private double offset;
+
 
   public arm() {
     sparkmax = new SparkMax(Constants.armCOnstants.sparkmaxID,MotorType.kBrushless);
     encoder = sparkmax.getEncoder();
+    reset_offset();
+    setZero();
   }
 
   public void setZero(){
@@ -42,7 +49,7 @@ public class arm extends SubsystemBase {
 
 
   public void rotatetoangle(double angle){
-    encoder.setPosition(angle);
+    encoder.setPosition(angle*Constants.armCOnstants.gearRatio);
 
   }
 
@@ -50,12 +57,31 @@ public class arm extends SubsystemBase {
     return run(() -> {rotatetoangle(input.getAsDouble());});
   }
 
+  public Command setToAngle(DoubleSupplier x,DoubleSupplier y){
+    return run(() -> {rotatetoangle(Math.atan2(y.getAsDouble(),x.getAsDouble()));});
+  }
+
   public Command setToAngle(Double input){
     return run(() -> {rotatetoangle(input);});
   }
 
+  public Command resetOffset(){
+    return run(() -> {reset_offset();});
+  }
+
+  public void reset_offset(){
+    offset = encoder.getPosition();
+  }
+
+  public double CurrentAngle(){
+    return encoder.getPosition() - offset;
+  }
+
+
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("arm/arm_angle", CurrentAngle()/Constants.armCOnstants.gearRatio);
+    SmartDashboard.putNumber("arm/offset", offset);
   }
 
   @Override

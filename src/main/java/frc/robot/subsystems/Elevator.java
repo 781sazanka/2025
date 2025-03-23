@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 
 
+
 public class Elevator extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
   TalonFX talon_1;
@@ -34,6 +35,9 @@ public class Elevator extends SubsystemBase {
   PIDController pid_controller_2;
   double currentHeight;
   Timer elevatorTimer;
+  double talon1_offset;
+  double talon2_offset;
+  
   
 
   public Elevator() {
@@ -44,6 +48,8 @@ public class Elevator extends SubsystemBase {
     pid_controller_1 = new PIDController(0.5,0,0);
     pid_controller_2 = new PIDController(0.5,0,0);
 
+    resetOffset();
+    
     currentHeight = 0;
   }
 
@@ -52,8 +58,13 @@ public class Elevator extends SubsystemBase {
     talon_2.set(pid_controller_2.calculate(talon_2.get(),volts));
   }
 
+  public void resetOffset(){
+    talon1_offset = talon_1.getPosition().getValueAsDouble();
+    talon2_offset = talon_2.getPosition().getValueAsDouble();
+  }
+
   public double getAnglemean(){
-    return (talon_1.getPosition().getValueAsDouble() + talon_2.getPosition().getValueAsDouble())/2;
+    return (talon_1.getPosition().getValueAsDouble() - talon1_offset + talon_2.getPosition().getValueAsDouble() - talon2_offset)/2;
   }
 
   public Command stopelevator() {
@@ -85,6 +96,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void resetHeightNumber(){
+    resetOffset();
     currentHeight = 0;
   }
 
