@@ -293,7 +293,8 @@ public class SwerveSubsystem extends SubsystemBase
     SmartDashboard.putNumber("rotation", rotation );  
     SmartDashboard.putNumber("VX m/s", movement.vxMetersPerSecond );  
     SmartDashboard.putNumber("VY m/s", movement.vyMetersPerSecond);  
-    SmartDashboard.putNumber("angular velocity", movement.omegaRadiansPerSecond);                                        
+    SmartDashboard.putNumber("angular velocity", movement.omegaRadiansPerSecond);   
+    SmartDashboard.putBoolean("bot oriented", bot_oriented);                                        
     });
     }
 
