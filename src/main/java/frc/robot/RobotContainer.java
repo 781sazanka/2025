@@ -65,6 +65,8 @@ public class RobotContainer
     reset.addRequirements(drivebase);
     driverXbox.button(3).whileTrue(reset);
 
+    /* 
+
     Command Drivetotarget = new driveToTarget(drivebase);
     Drivetotarget.addRequirements(drivebase);
     driverXbox.button(4).whileTrue(Drivetotarget);
@@ -116,6 +118,7 @@ public class RobotContainer
     NamedCommands.registerCommand("goRight", goRight);
     NamedCommands.registerCommand("goLeft", goLeft);
 
+    */
 
 
 
