@@ -39,7 +39,7 @@ public class RobotContainer
   final         CommandGenericHID driverXbox = new CommandGenericHID(3);
   final         CommandGenericHID driverXbox_2 = new CommandGenericHID(1);
   private final SwerveSubsystem drivebase  = new SwerveSubsystem();
-  //private final Elevator elevatorSubsystem = new Elevator();
+  private final Elevator elevatorSubsystem = new Elevator();
   //private final arm arm = new arm();
   //private final endEffector endEffector = new endEffector();
   private final SendableChooser<Command> autoChooser;
@@ -87,12 +87,14 @@ public class RobotContainer
     Command switchOrientation = drivebase.switchFeildOriented();
     driverXbox.button(1).onTrue(switchOrientation);
 
-    /* 
+    
 
 
     Command moveelevator = elevatorSubsystem.setSpeed(() -> (driverXbox_2.getRawAxis(1)));
     moveelevator.addRequirements(elevatorSubsystem);
     driverXbox_2.axisGreaterThan(1, 0.1).onTrue(moveelevator);
+
+    /* 
 
     Command movearm = arm.setToAngle((() -> (driverXbox_2.getRawAxis(3))),(() -> (driverXbox_2.getRawAxis(4))));
     movearm.addRequirements(arm);
@@ -123,6 +125,8 @@ public class RobotContainer
     NamedCommands.registerCommand("goLeft", goLeft);
 
     */
+
+    
 
 
 
