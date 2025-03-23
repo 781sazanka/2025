@@ -277,7 +277,7 @@ public class SwerveSubsystem extends SubsystemBase
 
 
 
-    movement = new ChassisSpeeds(scaledInputs.getY()*Constants.MAX_SPEED*-1, scaledInputs.getX()*-1*Constants.MAX_SPEED,rotation*Constants.Rotation_constant);
+    movement = new ChassisSpeeds(scaledInputs.getY()*Constants.MAX_SPEED*-1, scaledInputs.getX()*-1*Constants.MAX_SPEED,rotation*Constants.Rotation_constant*-1);
 
     
     if (bot_oriented == true){
